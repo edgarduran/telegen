@@ -124,6 +124,17 @@ namespace telegen.Tests
             }
         }
 
+        [Theory]
+        [InlineData("http://images.perseusbooks.com")]
+        public void TestNetworkCall(string uri)
+        { 
+            var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor)), "Network");
+            var msg = new NetworkGetData(uri);
+            client.Tell(msg);
+            var resp = ExpectMsg<WebResp>(TimeSpan.FromSeconds(5));
+            output.WriteLine(resp.ToString());
+
+        }
 
     }
 
