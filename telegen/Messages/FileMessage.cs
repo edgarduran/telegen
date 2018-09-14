@@ -9,6 +9,8 @@
         }
         public string Path { get; }
         public string FileName { get; }
+
+        public string FullName => System.IO.Path.Combine(Path, FileName);
     }
 
 }

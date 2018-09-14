@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace telegen.Messages
 {
@@ -7,7 +8,7 @@ namespace telegen.Messages
     {
         public UpdateFileMsg(string path, string filename, string data) : base(path, filename)
         {
-            Contents = data.ToCharArray().Cast<byte>();
+            Contents = Encoding.ASCII.GetBytes(data); // Actual contents doesn't really matter, so long as we have data.
         }
 
         public IEnumerable<byte> Contents { get; }
