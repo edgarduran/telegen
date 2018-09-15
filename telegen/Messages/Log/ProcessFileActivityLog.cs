@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace telegen.Messages.Log
 {
@@ -25,6 +26,15 @@ namespace telegen.Messages.Log
         public string FileEventType { get; }
         public string UserName { get; }
         public string CommandLine { get; }
+
+        public override void CopyToDictionary(IDictionary<object, object> d)
+        {
+            d[nameof(FileName)] = FileName;
+            d[nameof(FileEventType)] = FileEventType;
+            d[nameof(UserName)] = UserName.ToString();
+            d[nameof(CommandLine)] = CommandLine.ToString();
+            base.CopyToDictionary(d);
+        }
     }
 
 }
