@@ -13,5 +13,6 @@
   <ItemGroup>
     <Folder Include="Messages\" />
     <Folder Include="Messages\Log\" />
+    <Folder Include="Agents\" />
   </ItemGroup>
 </Project>

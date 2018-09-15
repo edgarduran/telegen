@@ -29,7 +29,7 @@ namespace telegen.Tests
         public void TestSpawn(string winFile, string unxFile)
         {
             var a = TestActor;
-            var spawner = Sys.ActorOf(Props.Create(() => new SpawnActor(a)));
+            var spawner = Sys.ActorOf(Props.Create(() => new ProcessActor(a, null)));
             var appFile = IsWindows ? winFile : unxFile;
             spawner.Tell(new SpawnMsg(appFile));
             var msg = ExpectMsg<ProcessStartLog>();
@@ -47,7 +47,7 @@ namespace telegen.Tests
             try
             {
                 var a = TestActor;
-                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a)), "Creator");
+                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Creator");
 
                 #region Test Create File
                 fileActor.Tell(new CreateFileMsg(folder, filename));
@@ -79,7 +79,7 @@ namespace telegen.Tests
                 var a = TestActor;
 
                 #region Test Update File
-                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a)), "Updater");
+                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Updater");
                 fileActor.Tell(new UpdateFileMsg(folder, filename, "Gotta stick something in here!"));
                 var updateLog = ExpectMsg<ProcessFileActivityLog>();
                 output.WriteLine(updateLog.ToString());
@@ -107,7 +107,7 @@ namespace telegen.Tests
                 var a = TestActor;
                
                 #region Test Delete File
-                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a)), "Deleter");
+                var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Deleter");
                 fileActor.Tell(new DeleteFileMsg(folder, filename));
                 var deleteLog = ExpectMsg<ProcessFileActivityLog>();
                 output.WriteLine(deleteLog.ToString());
@@ -128,7 +128,7 @@ namespace telegen.Tests
         [InlineData("http://images.perseusbooks.com")]
         public void TestNetworkCall(string uri)
         { 
-            var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor)), "Network");
+            var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor, null)), "Network");
             var msg = new NetworkGetData(uri);
             client.Tell(msg);
             var resp = ExpectMsg<WebResp>(TimeSpan.FromSeconds(5));
