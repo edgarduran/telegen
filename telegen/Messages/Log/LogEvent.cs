@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace telegen.Messages.Log
 {
@@ -45,9 +46,17 @@ namespace telegen.Messages.Log
 
         public string ProcessName { get; }
         public DateTime UTCStart { get; protected set; }
-        public string TimeString => $"{UTCStart:yyyyMMddhhmmsstttt}"; //TODO: Fix this format string!
+        public string TimeString => $"{UTCStart:u}";
         public int ProcessId { get; }
 
+
+        public virtual void CopyToDictionary(IDictionary<object, object> d)
+        {
+            d["_Type"] = GetType().Name;
+            d[nameof(ProcessName)] = ProcessName;
+            d[nameof(UTCStart)] = TimeString;
+            d[nameof(ProcessId)] = ProcessId.ToString();
+        }
     }
 
 

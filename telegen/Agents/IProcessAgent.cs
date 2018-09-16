@@ -5,6 +5,6 @@ namespace telegen.Agents
 {
     public interface IProcessAgent
     {
-        ProcessStartLog Spawn(SpawnMsg msg);
+        Spawn Spawn(SpawnMsg msg);
     }
 }

@@ -17,7 +17,7 @@ namespace telegen.Tests
         [Fact]
         public void TestCreateFileLogMsg()
         {
-            var msg = new ProcessFileActivityLog(DateTime.UtcNow, "~/file.txt", FileEventType.Create);
+            var msg = new FileActivity(DateTime.UtcNow, "~/file.txt", FileEventType.Create);
             Assert.NotEqual(0, msg.ProcessId);
             output.WriteLine(msg.ToString());
         }

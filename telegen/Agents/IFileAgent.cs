@@ -5,8 +5,8 @@ namespace telegen.Agents
 {
     public interface IFileAgent
     {
-        ProcessFileActivityLog CreateFile(CreateFileMsg msg);
-        ProcessFileActivityLog DeleteFile(DeleteFileMsg msg);
-        ProcessFileActivityLog UpdateFile(UpdateFileMsg msg);
+        FileActivity CreateFile(CreateFileMsg msg);
+        FileActivity DeleteFile(DeleteFileMsg msg);
+        FileActivity UpdateFile(UpdateFileMsg msg);
     }
 }
