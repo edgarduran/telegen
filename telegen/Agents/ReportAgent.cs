@@ -4,7 +4,7 @@ using telegen.Messages.Log;
 
 namespace telegen.Agents
 {
-    public class ReportAgent 
+    public class ReportAgent : IReportAgent
     {
         protected ILogger Report { get; }
         protected const string LoggerName = "Report";
@@ -29,7 +29,6 @@ namespace telegen.Agents
             var e = new LogEventInfo(LogLevel.Info, LoggerName, evt.GetType().Name);
             evt.CopyToDictionary(e.Properties);
             Report.Info(e);
-
         }
 
     }

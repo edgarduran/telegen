@@ -32,7 +32,7 @@ namespace telegen.Tests
             var spawner = Sys.ActorOf(Props.Create(() => new ProcessActor(a, null)));
             var appFile = IsWindows ? winFile : unxFile;
             spawner.Tell(new SpawnMsg(appFile));
-            var msg = ExpectMsg<ProcessStartLog>();
+            var msg = ExpectMsg<Messages.Log.Spawn>();
             output.WriteLine(msg.ToString());
             Assert.Equal(Environment.UserName, msg.UserName);
         }
@@ -52,7 +52,7 @@ namespace telegen.Tests
                 #region Test Create File
                 fileActor.Tell(new CreateFileMsg(folder, filename));
 
-                var createLog = ExpectMsg<ProcessFileActivityLog>();
+                var createLog = ExpectMsg<Messages.Log.FileActivity>();
                 output.WriteLine(createLog.ToString());
                 Assert.Equal(Environment.UserName, createLog.UserName);
                 Assert.Equal(filePath, createLog.FileName);
@@ -81,7 +81,7 @@ namespace telegen.Tests
                 #region Test Update File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Updater");
                 fileActor.Tell(new UpdateFileMsg(folder, filename, "Gotta stick something in here!"));
-                var updateLog = ExpectMsg<ProcessFileActivityLog>();
+                var updateLog = ExpectMsg<Messages.Log.FileActivity>();
                 output.WriteLine(updateLog.ToString());
                 Assert.Equal(Environment.UserName, updateLog.UserName);
                 Assert.Equal(filePath, updateLog.FileName);
@@ -109,7 +109,7 @@ namespace telegen.Tests
                 #region Test Delete File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Deleter");
                 fileActor.Tell(new DeleteFileMsg(folder, filename));
-                var deleteLog = ExpectMsg<ProcessFileActivityLog>();
+                var deleteLog = ExpectMsg<Messages.Log.FileActivity>();
                 output.WriteLine(deleteLog.ToString());
                 Assert.Equal(Environment.UserName, deleteLog.UserName);
                 Assert.Equal(filePath, deleteLog.FileName);

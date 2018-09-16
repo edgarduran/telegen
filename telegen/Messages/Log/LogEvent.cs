@@ -52,6 +52,7 @@ namespace telegen.Messages.Log
 
         public virtual void CopyToDictionary(IDictionary<object, object> d)
         {
+            d["_Type"] = GetType().Name;
             d[nameof(ProcessName)] = ProcessName;
             d[nameof(UTCStart)] = TimeString;
             d[nameof(ProcessId)] = ProcessId.ToString();

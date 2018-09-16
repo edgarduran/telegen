@@ -6,10 +6,10 @@ namespace telegen.Agents
 {
     public class ProcessAgent : IProcessAgent
     {
-        public ProcessStartLog Spawn(SpawnMsg msg)
+        public Spawn Spawn(SpawnMsg msg)
         {
             var p = System.Diagnostics.Process.Start(msg.Executable, msg.Arguments);
-            return new ProcessStartLog(p, Environment.UserName, msg.Arguments);
+            return new Spawn(p, Environment.UserName, msg.Arguments);
         }
     }
 }

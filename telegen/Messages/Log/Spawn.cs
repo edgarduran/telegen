@@ -4,9 +4,9 @@ using System.Diagnostics;
 
 namespace telegen.Messages.Log
 {
-    public class ProcessStartLog : LogEvent
+    public class Spawn : LogEvent
     {
-        public ProcessStartLog(Process p, string userName, string commandLine = null) : base(p)
+        public Spawn(Process p, string userName, string commandLine = null) : base(p)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace telegen.Messages.Log
             }
         }
 
-        public ProcessStartLog(string name, DateTime utcStart, int procId, string userName, string commandLine = null) : base(name, utcStart, procId)
+        public Spawn(string name, DateTime utcStart, int procId, string userName, string commandLine = null) : base(name, utcStart, procId)
         {
             UserName = userName;
             CommandLine = commandLine ?? string.Empty;
@@ -31,8 +31,8 @@ namespace telegen.Messages.Log
 
         public override void CopyToDictionary(IDictionary<object, object> d)
         {
-            d[nameof(UserName)] = UserName.ToString();
-            d[nameof(CommandLine)] = CommandLine.ToString();
+            d[nameof(UserName)] = UserName;
+            d[nameof(CommandLine)] = CommandLine;
             base.CopyToDictionary(d);
         }
     }

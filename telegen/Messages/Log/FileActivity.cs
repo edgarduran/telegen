@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace telegen.Messages.Log
 {
-    public class ProcessFileActivityLog : LogEvent
+    public class FileActivity : LogEvent
     {
 
-        public ProcessFileActivityLog (DateTime utcStart, string filename, string fileEventType, string username = null)
+        public FileActivity (DateTime utcStart, string filename, string fileEventType, string username = null)
         {
             FileName = filename;
             UTCStart = utcStart;
@@ -14,7 +14,7 @@ namespace telegen.Messages.Log
             UserName = username ?? Environment.UserName;
         }
 
-        public ProcessFileActivityLog(DateTime utcStart, string fileName, string fileEventType, string userName, string processName, string commandLine, int procId) : base(processName, utcStart, procId)
+        public FileActivity(DateTime utcStart, string fileName, string fileEventType, string userName, string processName, string commandLine, int procId) : base(processName, utcStart, procId)
         {
             FileName = fileName;
             FileEventType = fileEventType;
@@ -31,8 +31,8 @@ namespace telegen.Messages.Log
         {
             d[nameof(FileName)] = FileName;
             d[nameof(FileEventType)] = FileEventType;
-            d[nameof(UserName)] = UserName.ToString();
-            d[nameof(CommandLine)] = CommandLine.ToString();
+            d[nameof(UserName)] = UserName;
+            d[nameof(CommandLine)] = CommandLine;
             base.CopyToDictionary(d);
         }
     }
