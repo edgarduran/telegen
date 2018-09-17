@@ -1,5 +1,5 @@
 ﻿using System;
-using telegen.Messages.Log;
+using telegen.Operations.Results;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,7 +17,7 @@ namespace telegen.Tests
         [Fact]
         public void TestCreateFileLogMsg()
         {
-            var msg = new ProcessFileActivityLog(DateTime.UtcNow, "~/file.txt", FileEventType.Create);
+            var msg = new FileActivityResult(DateTime.UtcNow, "~/file.txt", FileEventType.Create);
             Assert.NotEqual(0, msg.ProcessId);
             output.WriteLine(msg.ToString());
         }
