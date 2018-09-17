@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace telegen.Operations.Results
 {
+    //todo: Add appropriate JsonProperty attributes to these classes
     public abstract class Result {
         protected static string _thisProcessName = null;
         protected static int _thisProcessId;
@@ -69,7 +70,8 @@ namespace telegen.Operations.Results
 
         public virtual void CopyToDictionary(IDictionary<object, object> d)
         {
-            d["_Type"] = GetType().Name.Replace("Result", string.Empty);
+            d["Type"] = GetType().Name.Replace("Result", string.Empty);
+            d[nameof(ResultType)] = ResultType;
             d[nameof(ProcessName)] = ProcessName;
             d[nameof(UTCStart)] = TimeString;
             d[nameof(ProcessId)] = ProcessId.ToString();

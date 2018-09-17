@@ -8,11 +8,15 @@
 
   <ItemGroup>
     <None Remove="Scripts\Mac\Script1.tg" />
+    <None Remove="Scripts\Windows\CSV.layout" />
     <None Remove="Scripts\Windows\Script1.tg" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Scripts\Mac\Script1.tg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Windows\CSV.layout">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\Windows\Script1.tg">
@@ -22,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.9" />
-    <PackageReference Include="Akka.Logger.NLog" Version="1.3.3" />
+    <PackageReference Include="NLog" Version="4.5.10" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Operations\Results\" />
