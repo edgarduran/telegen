@@ -1,9 +1,9 @@
-﻿using telegen.Messages.Log;
+﻿using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
     public interface IReportAgent
     {
-        void AddReportLine(LogEvent evt);
+        void AddReportLine(Result evt);
     }
 }

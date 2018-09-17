@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace telegen.Messages.Log
+namespace telegen.Operations.Results
 {
-    public class FileActivity : LogEvent
+    public class FileActivityResult : Result
     {
 
-        public FileActivity (DateTime utcStart, string filename, string fileEventType, string username = null)
+        public FileActivityResult (DateTime utcStart, string filename, string fileEventType, string username = null)
         {
             FileName = filename;
             UTCStart = utcStart;
@@ -14,7 +14,7 @@ namespace telegen.Messages.Log
             UserName = username ?? Environment.UserName;
         }
 
-        public FileActivity(DateTime utcStart, string fileName, string fileEventType, string userName, string processName, string commandLine, int procId) : base(processName, utcStart, procId)
+        public FileActivityResult(DateTime utcStart, string fileName, string fileEventType, string userName, string processName, string commandLine, int procId) : base(processName, utcStart, procId)
         {
             FileName = fileName;
             FileEventType = fileEventType;
@@ -24,9 +24,7 @@ namespace telegen.Messages.Log
 
         public string FileName { get; }
         public string FileEventType { get; }
-        public string UserName { get; }
-        public string CommandLine { get; }
-
+ 
         public override void CopyToDictionary(IDictionary<object, object> d)
         {
             d[nameof(FileName)] = FileName;

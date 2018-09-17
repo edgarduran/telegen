@@ -1,41 +1,73 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using telegen.Messages;
-using telegen.Messages.Log;
+using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
-    public class FileAgent : IFileAgent
+    public class FileAgent : IFileAgent, IAgent
     {
-        public FileActivity CreateFile(CreateFileMsg msg)
+        public FileActivityResult CreateFile(OpCreateFile msg)
         {
             File.WriteAllText(msg.FullName, string.Empty);
             var fi = new FileInfo(msg.FullName);
-            return new Messages.Log.FileActivity(fi.CreationTimeUtc, msg.FullName, FileEventType.Create, Environment.UserName);
+            return new FileActivityResult(fi.CreationTimeUtc, msg.FullName, FileEventType.Create, Environment.UserName);
         }
 
-        public FileActivity UpdateFile(UpdateFileMsg msg)
+        public FileActivityResult UpdateFile(OpUpdateFile msg)
         {
             if (File.Exists(msg.FullName))
             {
-                File.WriteAllBytes(msg.FullName, msg.Contents.ToArray());
+                var fi0 = new FileInfo(msg.FullName);
+                var lastwrite = fi0.LastWriteTimeUtc;
+                File.AppendAllText(msg.FullName, msg.Contents);
                 var fi = new FileInfo(msg.FullName);
-                return new Messages.Log.FileActivity(fi.LastWriteTimeUtc, msg.FullName, FileEventType.Update, Environment.UserName);
+                System.Diagnostics.Debug.Assert(fi.LastWriteTimeUtc > lastwrite);
+                return new FileActivityResult(fi.LastWriteTimeUtc, msg.FullName, FileEventType.Update, Environment.UserName);
             }
             return null;
         }
 
-        public FileActivity DeleteFile(DeleteFileMsg msg)
+        public FileActivityResult DeleteFile(OpDeleteFile msg)
         {
             //TODO: What do I do if the requested event is not performed?
             if (File.Exists(msg.FullName))
             {
                 File.Delete(msg.FullName);
-                return new Messages.Log.FileActivity(DateTime.UtcNow, msg.FullName, FileEventType.Delete, Environment.UserName);
-                //ActivityLogger.Tell(results, Self);
+                return new FileActivityResult(DateTime.UtcNow, msg.FullName, FileEventType.Delete, Environment.UserName);
+
             }
             return null;
+        }
+
+        public Result Execute(Operation oper)
+        {
+            Result result = null;
+            switch (oper.GetType().Name)
+            {
+                case nameof(OpCreateFile): 
+                    {
+                        result = CreateFile(oper as OpCreateFile);
+                        break;
+                    }
+                case nameof(OpUpdateFile):
+                    {
+                        result = UpdateFile(oper as OpUpdateFile);
+                        break;
+                    }
+                case nameof(OpDeleteFile):
+                    {
+                        result = DeleteFile(oper as OpDeleteFile);
+                        break;
+                    }
+                default:
+                    {
+                        result = new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
+                        break;
+                    }
+            }
+            return result;
         }
     }
 }

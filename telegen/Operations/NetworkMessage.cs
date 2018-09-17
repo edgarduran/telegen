@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace telegen.Messages
+namespace telegen.Operations
 {
-    public abstract class NetworkMessage : MsgBase
+    public abstract class NetworkMessage : Operation
     {
         protected NetworkMessage(string uri) => Uri = new Uri(uri);
         public Uri Uri { get; }

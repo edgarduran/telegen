@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace telegen.Messages.Log
+namespace telegen.Operations.Results
 {
-    public class Spawn : LogEvent
+    public class SpawnResults : Result
     {
-        public Spawn(Process p, string userName, string commandLine = null) : base(p)
+        public SpawnResults(Process p, string userName, string commandLine = null) : base(p)
         {
             try
             {
@@ -20,14 +20,12 @@ namespace telegen.Messages.Log
             }
         }
 
-        public Spawn(string name, DateTime utcStart, int procId, string userName, string commandLine = null) : base(name, utcStart, procId)
+        public SpawnResults(string name, DateTime utcStart, int procId, string userName, string commandLine = null) : base(name, utcStart, procId)
         {
             UserName = userName;
             CommandLine = commandLine ?? string.Empty;
         }
 
-        public string CommandLine { get; }
-        public string UserName { get; }
 
         public override void CopyToDictionary(IDictionary<object, object> d)
         {

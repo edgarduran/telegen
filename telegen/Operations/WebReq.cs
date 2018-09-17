@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace telegen.Actors
+namespace telegen.Operations
 {
     public class WebReq
     {

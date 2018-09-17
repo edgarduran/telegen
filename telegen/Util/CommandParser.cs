@@ -31,7 +31,7 @@ namespace telegen.Util
                 var token = GetNextToken(ref commandText);
                 if (cmd.Command == null)
                 {
-                    cmd.Command = token.ToUpper();
+                    cmd.Command = token;//.ToUpper();
                 }
                 else
                 {
@@ -61,7 +61,7 @@ namespace telegen.Util
         {
             const char endToken = ' ';
             const char NotInQuotes = char.MinValue;
-            const char EscapeChar = '/';
+            const char EscapeChar = '\\';
             const char SQuote = '\'';
             const char DQuote = '"';
 

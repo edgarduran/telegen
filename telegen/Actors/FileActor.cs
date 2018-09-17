@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using Akka.Actor;
 using telegen.Agents;
-using telegen.Messages;
-using telegen.Messages.Log;
+using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Actors
 {
@@ -20,18 +20,18 @@ namespace telegen.Actors
 
         protected void Listening()
         {
-            Receive<CreateFileMsg>(m => CreateFile(m));
-            Receive<UpdateFileMsg>(m => UpdateFile(m));
-            Receive<DeleteFileMsg>(m => DeleteFile(m));
+            Receive<OpCreateFile>(m => CreateFile(m));
+            Receive<OpUpdateFile>(m => UpdateFile(m));
+            Receive<OpDeleteFile>(m => DeleteFile(m));
         }
 
-        protected void CreateFile(CreateFileMsg msg)
+        protected void CreateFile(OpCreateFile msg)
         {
             var results = Agent.CreateFile(msg);
             ActivityLogger.Tell(results, Self);
         }
 
-        protected void UpdateFile(UpdateFileMsg msg)
+        protected void UpdateFile(OpUpdateFile msg)
         {
             var results = Agent.UpdateFile(msg);
             if (results != null)
@@ -40,7 +40,7 @@ namespace telegen.Actors
             }
         }
 
-        protected void DeleteFile(DeleteFileMsg msg)
+        protected void DeleteFile(OpDeleteFile msg)
         {
             //TODO: What do I do if the requested event is not performed?
             var results = Agent.DeleteFile(msg);

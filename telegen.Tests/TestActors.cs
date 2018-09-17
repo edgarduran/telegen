@@ -3,8 +3,8 @@ using System.IO;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using telegen.Actors;
-using telegen.Messages;
-using telegen.Messages.Log;
+using telegen.Operations;
+using telegen.Operations.Results;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,8 +31,8 @@ namespace telegen.Tests
             var a = TestActor;
             var spawner = Sys.ActorOf(Props.Create(() => new ProcessActor(a, null)));
             var appFile = IsWindows ? winFile : unxFile;
-            spawner.Tell(new SpawnMsg(appFile));
-            var msg = ExpectMsg<Messages.Log.Spawn>();
+            spawner.Tell(new OpSpawn(appFile));
+            var msg = ExpectMsg<SpawnResults>();
             output.WriteLine(msg.ToString());
             Assert.Equal(Environment.UserName, msg.UserName);
         }
@@ -50,9 +50,9 @@ namespace telegen.Tests
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Creator");
 
                 #region Test Create File
-                fileActor.Tell(new CreateFileMsg(folder, filename));
+                fileActor.Tell(new OpCreateFile(folder, filename));
 
-                var createLog = ExpectMsg<Messages.Log.FileActivity>();
+                var createLog = ExpectMsg<Operations.Results.FileActivityResult>();
                 output.WriteLine(createLog.ToString());
                 Assert.Equal(Environment.UserName, createLog.UserName);
                 Assert.Equal(filePath, createLog.FileName);
@@ -80,8 +80,8 @@ namespace telegen.Tests
 
                 #region Test Update File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Updater");
-                fileActor.Tell(new UpdateFileMsg(folder, filename, "Gotta stick something in here!"));
-                var updateLog = ExpectMsg<Messages.Log.FileActivity>();
+                fileActor.Tell(new OpUpdateFile(filePath, "Gotta stick something in here!"));
+                var updateLog = ExpectMsg<Operations.Results.FileActivityResult>();
                 output.WriteLine(updateLog.ToString());
                 Assert.Equal(Environment.UserName, updateLog.UserName);
                 Assert.Equal(filePath, updateLog.FileName);
@@ -108,8 +108,8 @@ namespace telegen.Tests
                
                 #region Test Delete File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Deleter");
-                fileActor.Tell(new DeleteFileMsg(folder, filename));
-                var deleteLog = ExpectMsg<Messages.Log.FileActivity>();
+                fileActor.Tell(new OpDeleteFile(filePath));
+                var deleteLog = ExpectMsg<FileActivityResult>();
                 output.WriteLine(deleteLog.ToString());
                 Assert.Equal(Environment.UserName, deleteLog.UserName);
                 Assert.Equal(filePath, deleteLog.FileName);
@@ -129,7 +129,7 @@ namespace telegen.Tests
         public void TestNetworkCall(string uri)
         { 
             var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor, null)), "Network");
-            var msg = new NetworkGetData(uri);
+            var msg = new OpNetGet(uri);
             client.Tell(msg);
             var resp = ExpectMsg<WebResp>(TimeSpan.FromSeconds(5));
             output.WriteLine(resp.ToString());

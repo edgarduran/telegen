@@ -3,13 +3,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using telegen.Actors;
+using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
-    public class NetworkAgent : INetworkAgent
+    public class NetworkAgent : INetworkAgent, IAgent
     {
 
-        public WebResp Execute(WebReq req)
+        public NetResult Execute(WebReq req)
         {
             // Data buffer for incoming data.  
             byte[] bytes = new byte[1024];
@@ -74,10 +76,18 @@ namespace telegen.Agents
             {
                 Console.WriteLine(e.ToString());
             }
-            return new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort);
+            return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
         }
 
-
-
+        public Result Execute(Operation oper)
+        {
+            if (oper is OpNetGet)
+            {
+                var op = oper as OpNetGet;
+                var req = new WebReq(op.Address);
+                return Execute(req);
+            }
+            return new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
+        }
     }
 }

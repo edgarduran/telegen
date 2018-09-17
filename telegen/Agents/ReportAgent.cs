@@ -1,6 +1,6 @@
 ﻿using System;
 using NLog;
-using telegen.Messages.Log;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
@@ -14,7 +14,7 @@ namespace telegen.Agents
             Report = LogManager.GetLogger(LoggerName);
         }
 
-        public virtual void AddReportLine(LogEvent evt)
+        public virtual void AddReportLine(Result evt)
         {
             var payload = evt.ToString();
             Report.Info(payload);
@@ -24,7 +24,7 @@ namespace telegen.Agents
 
     public class CustomizableReportAgent : ReportAgent
     {
-        public override void AddReportLine(LogEvent evt)
+        public override void AddReportLine(Result evt)
         {
             var e = new LogEventInfo(LogLevel.Info, LoggerName, evt.GetType().Name);
             evt.CopyToDictionary(e.Properties);
