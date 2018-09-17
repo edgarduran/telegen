@@ -5,6 +5,10 @@ namespace telegen.Operations
     {
         protected FileOperation(string fullname)
         {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                fullname = fullname.Replace("/", "\\");
+            }
+
             FullName = fullname.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
         }
 

@@ -63,9 +63,35 @@ namespace telegen.Operations.Results
             d[nameof(ProcessName)] = ProcessName;
             d[nameof(UTCStart)] = TimeString;
             d[nameof(ProcessId)] = ProcessId.ToString();
+            d[nameof(UserName)] = UserName;
+            d[nameof(CommandLine)] = CommandLine;
         }
 
         public override string ToString() => JsonConvert.SerializeObject(this);
+    }
+
+    public class MessageResult : Result
+    {
+        public string Message { get; }
+
+        public MessageResult(string message) {
+            Message = message;
+        }
+
+        public MessageResult(string message, Process p) : base(p)
+        {
+            Message = message;
+        }
+
+        public MessageResult(string message, string processName, DateTime utcStart, int procId) : base(processName, utcStart, procId)
+        {
+            Message = message;
+        }
+
+        public override void CopyToDictionary(IDictionary<object, object> d) {
+            base.CopyToDictionary(d);
+            d[nameof(Message)] = Message;
+        }
     }
 
 }

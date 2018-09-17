@@ -10,5 +10,4 @@ namespace telegen.Operations
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }
-
 }

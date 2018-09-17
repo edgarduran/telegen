@@ -14,20 +14,4 @@ namespace telegen.Agents
     {
         Result Execute(Operation oper);
     }
-
-
-    public class NullAgent : IAgent
-    {
-        public static IAgent Instance { get; } = new NullAgent();
-
-        protected NullAgent()
-        {
-        }
-
-        public Result Execute(Operation oper)
-        {
-            return new NullResult($"Unknown operation code : {oper.GetType().Name}");
-        }
-
-    }
 }

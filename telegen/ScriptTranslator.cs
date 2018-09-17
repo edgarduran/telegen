@@ -13,13 +13,15 @@ namespace telegen
 
         public ScriptTranslator()
         {
-            Translators = new Dictionary<string, Func<IParsedCommand, Operation>>();
-
-            Translators["FILE.CREATE"] = cmd => new OpCreateFile(cmd.Parms[0]);
-            Translators["FILE.APPEND"] = cmd => new OpUpdateFile(cmd.Parms[0], cmd.Parms[1]);
-            Translators["FILE.DELETE"] = cmd => new OpDeleteFile(cmd.Parms[0]);
-            Translators["NET.GET"] = cmd => new OpNetGet(cmd.Parms[0]);
-            Translators["EXEC"] = cmd => new OpSpawn(cmd.Parms[0], cmd.Parms.Skip(1));
+            Translators = new Dictionary<string, Func<IParsedCommand, Operation>>
+            {
+                ["FILE.CREATE"] = cmd => new OpCreateFile(cmd.Parms[0]),
+                ["FILE.APPEND"] = cmd => new OpUpdateFile(cmd.Parms[0], cmd.Parms[1]),
+                ["FILE.DELETE"] = cmd => new OpDeleteFile(cmd.Parms[0]),
+                ["NET.GET"] = cmd => new OpNetGet(cmd.Parms[0]),
+                ["EXEC"] = cmd => new OpSpawn(cmd.Parms[0], cmd.Parms.Skip(1)),
+                ["WAIT"] = cmd => new OpWait(Convert.ToInt32(cmd.Parms[0]))
+            };
 
         }
 
@@ -36,7 +38,7 @@ namespace telegen
 
                 var cmd = parser.Parse(line);
                 var xlator = Translators[cmd.Command];
-                var results = xlator != null ? xlator(cmd) : null; //todo replace this.;
+                var results = xlator?.Invoke(cmd) ?? new OpNop (line); 
                 yield return results;
             }
             yield break;
