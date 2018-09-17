@@ -3,6 +3,10 @@ using System.IO;
 using System.Linq;
 using Akka.Actor;
 using Newtonsoft.Json;
+using NLog;
+using NLog.Config;
+using NLog.Layouts;
+using NLog.Targets;
 using telegen.Operations.Results;
 using telegen.Util;
 
@@ -42,15 +46,40 @@ namespace telegen
 
             var echoOn = cmd.ContainsSwitch("echo");
 
+            var useCustomLayout = cmd.ContainsSwitch("format");
+            string customLayout = null;
+            if (useCustomLayout) {
+                var customLayoutFile = cmd.Switches.format;
+                if (File.Exists(customLayoutFile)) {
+                    customLayout = File.ReadAllText(customLayoutFile);
+                } else {
+                    throw new Exception($"ERR: Could not find requested layout file ({customLayoutFile})");
+                }
+            }
+
+            if (cmd.ContainsSwitch("clear")) File.Delete(outFile);
+            
+            ILogger log = new NullLogger(new LogFactory());
+            if (useCustomLayout) {
+                log = ConfigureNLog(outFile, customLayout);
+            } else { 
             var header = $@"[ 
 {{ ""source"": ""telegen v{version}"" }}";
-            File.WriteAllText(outFile, header);
+                File.WriteAllText(outFile, header);
+            }
 
             var engine = new ScriptEngine();
             foreach (var logEntry in engine.Execute(scriptFile)) {
                 if (logEntry == null) continue;
                 var text = logEntry.ToString();
-                File.AppendAllText(outFile, ",\n" + text);
+                if (useCustomLayout) {
+                    var evt = new LogEventInfo(LogLevel.Info, log.Name, logEntry.GetType().Name);
+                    logEntry.CopyToDictionary(evt.Properties);
+                    log.Info(evt);
+                } else {                    
+                    File.AppendAllText(outFile, ",\n" + text);
+                }
+
                 if (echoOn) Console.WriteLine(text);
             }
             File.AppendAllText(outFile, "\n]");
@@ -66,6 +95,57 @@ namespace telegen
             }
 #endif
             #endregion
+        }
+
+        private static ILogger ConfigureNLog(string filename, string customLayout) {
+            var cfg = new LoggingConfiguration();
+            var tgt = new FileTarget("fileWriter") {FileName=filename, Layout = BuildLayout(customLayout)};
+            cfg.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, tgt));
+            LogManager.Configuration = cfg;
+            return LogManager.GetLogger("Reporter");
+        }
+
+        private static Layout BuildLayout(string def) {
+            var layout = string.Empty;
+            var name = string.Empty;
+            const char startName = '{';
+            const char endName = '}';
+
+            bool inName = false;
+            var pos = 0;
+            foreach (var c in def.ToCharArray()) {
+                pos++;
+                switch (c) {
+                    case startName:
+                        if (inName) {
+                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
+                        } else {
+                            inName = true;
+                        }
+                        break;
+                    case endName:
+                        if (inName) {
+                            inName = false;
+                            layout += $"${{event-properties:item={name}}}";
+                            name = String.Empty;
+                        }
+                        else
+                        {
+                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
+                        }
+                        break;
+                    default:
+                        if (inName) {
+                            name += c;
+                        } else {
+                            layout += c;
+                        }
+                        break;
+
+                }
+            }
+
+            return layout;
         }
 
         private static void SetDefaults() {
@@ -93,8 +173,10 @@ namespace telegen
             Console.WriteLine("         [outputfile] -- Optional. Specifies the file name where the results are written. Default is <scriptfile>.txt\n\n");
 
             Console.WriteLine("   Switches:\n");
-            Console.WriteLine("      --help : Show this help information.");
-            Console.WriteLine("      --echo : Display log output to the screen.\n\n");
+            Console.WriteLine("      --help              : Show this help information.");
+            Console.WriteLine("      --echo              : Display log output to the screen.\n\n");
+            Console.WriteLine("      --clear             : Clear the log before running.\n\n");
+            Console.WriteLine("      --format=<filename> : Use a custom format for the output.\n\n");
 
             Console.WriteLine("   Script Commands:\n");
             Console.WriteLine("      #This is a comment");
