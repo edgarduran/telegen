@@ -5,17 +5,18 @@ using Newtonsoft.Json;
 
 namespace telegen.Operations.Results
 {
-    public abstract class Result 
-    {
-        protected readonly string _thisProcessName;
-        protected readonly int _thisProcessId;
-        protected readonly string _thisProcessCommandLine;
-        protected readonly string _thisUserName;
-        protected readonly DateTime _thisProcessStartTime;
+    public abstract class Result {
+        protected static string _thisProcessName = null;
+        protected static int _thisProcessId;
+        protected static string _thisProcessCommandLine;
+        protected static string _thisStartingFolder;
+        protected static string _thisUserName;
+        protected static DateTime _thisProcessStartTime;
+        protected static string _Machine;
         protected static object _processLock = new object();
 
-        protected Result()
-        {
+
+        protected static void GetDefaults() {
             if (_thisProcessName == null)
             {
                 lock (_processLock)
@@ -28,25 +29,32 @@ namespace telegen.Operations.Results
                         _thisProcessStartTime = p.StartTime.ToUniversalTime();
                         _thisUserName = Environment.UserName;
                         _thisProcessCommandLine = Environment.CommandLine;
+                        _thisStartingFolder = Environment.CurrentDirectory;
+                        _Machine = Environment.MachineName;
                     }
                 }
             }
-            UserName = _thisUserName;
-            ProcessName = _thisProcessName;
-            UTCStart = _thisProcessStartTime;
-            ProcessId = _thisProcessId;
+        }
 
+        protected Result() {
+            GetDefaults();
+            ProcessName = _thisProcessName;
+            ProcessId = _thisProcessId;
+            UTCStart = _thisProcessStartTime;                        
+            UserName = _thisUserName;
+            CommandLine = _thisProcessCommandLine;
+            StartingFolder = _thisStartingFolder;
+            Machine = _Machine;
         }
 
 
-        protected Result(string processName, DateTime utcStart, int procId)
-        {
+        protected Result(string processName, DateTime utcStart, int procId): this() {
             ProcessName = processName;
             UTCStart = utcStart;
-            ProcessId = procId;
+            ProcessId = procId;            
         }
 
-        protected Result(Process p) : this (p.ProcessName, p.StartTime.ToUniversalTime(), p.Id) {
+        protected Result(Process p) : this (p.ProcessName, p.StartTime.ToUniversalTime(), p.Id)  {            
         }
 
         public string ResultType => GetType().Name;
@@ -56,6 +64,8 @@ namespace telegen.Operations.Results
         public DateTime UTCStart { get; protected set; }
         public string UserName { get; protected set; }
         public string CommandLine { get; protected set; }
+        public string StartingFolder { get; protected set; }
+        public string Machine { get; protected set; }
 
         public virtual void CopyToDictionary(IDictionary<object, object> d)
         {
@@ -65,6 +75,8 @@ namespace telegen.Operations.Results
             d[nameof(ProcessId)] = ProcessId.ToString();
             d[nameof(UserName)] = UserName;
             d[nameof(CommandLine)] = CommandLine;
+            d[nameof(StartingFolder)] = StartingFolder;
+            d[nameof(Machine)] = Machine;
         }
 
         public override string ToString() => JsonConvert.SerializeObject(this);

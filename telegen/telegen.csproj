@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\Mac\Script1.tg" />
     <None Remove="Scripts\Windows\Script1.tg" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Scripts\Mac\Script1.tg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\Windows\Script1.tg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

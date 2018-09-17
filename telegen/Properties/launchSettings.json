@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "telegen": {
+      "commandName": "Project",
+      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg"
+    }
+  }
+}
