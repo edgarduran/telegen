@@ -19,11 +19,8 @@ namespace telegen.Agents
         {
             if (File.Exists(msg.FullName))
             {
-                var fi0 = new FileInfo(msg.FullName);
-                var lastwrite = fi0.LastWriteTimeUtc;
                 File.AppendAllText(msg.FullName, msg.Contents);
-                var fi = new FileInfo(msg.FullName);
-                System.Diagnostics.Debug.Assert(fi.LastWriteTimeUtc > lastwrite);
+                var fi = new FileInfo(msg.FullName);                
                 return new FileActivityResult(fi.LastWriteTimeUtc, msg.FullName, FileEventType.Update, Environment.UserName);
             }
             return null;

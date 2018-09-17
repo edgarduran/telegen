@@ -17,6 +17,7 @@ namespace telegen
             {
                 ["FILE.CREATE"] = cmd => new OpCreateFile(cmd.Parms[0]),
                 ["FILE.APPEND"] = cmd => new OpUpdateFile(cmd.Parms[0], cmd.Parms[1]),
+                ["FILE.APPENDLINE"] = cmd => new OpUpdateFile(cmd.Parms[0], cmd.Parms[1] + Environment.NewLine),
                 ["FILE.DELETE"] = cmd => new OpDeleteFile(cmd.Parms[0]),
                 ["NET.GET"] = cmd => new OpNetGet(cmd.Parms[0]),
                 ["EXEC"] = cmd => new OpSpawn(cmd.Parms[0], cmd.Parms.Skip(1)),
