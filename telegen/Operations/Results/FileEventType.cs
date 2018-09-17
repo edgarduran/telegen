@@ -1,4 +1,4 @@
-﻿namespace telegen.Messages.Log
+﻿namespace telegen.Operations.Results
 {
     public static class FileEventType
     {

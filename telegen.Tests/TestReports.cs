@@ -3,7 +3,7 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 using telegen.Agents;
-using telegen.Messages.Log;
+using telegen.Operations.Results;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -85,9 +85,9 @@ namespace telegen.Tests
             //Assert.All(logs, s => expected.Contains(s));
         }
 
-        public IEnumerable<LogEvent> GetLogEventSet001()
+        public IEnumerable<Result> GetLogEventSet001()
         {
-            LogEvent evt = new FileActivity(
+            Result evt = new FileActivityResult(
                 new System.DateTime(2000,01,01,01,00,00,00,00),
                 "Test.File",
                 FileEventType.Create,
@@ -95,7 +95,7 @@ namespace telegen.Tests
                 );
             yield return evt;
 
-            evt = new Spawn(
+            evt = new SpawnResults(
                 "Process",
                 new System.DateTime(2000, 01, 01, 01, 00, 00, 00, 00),
                 001,

@@ -7,12 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\Mac\Script1.tg" />
+    <None Remove="Scripts\Windows\Script1.tg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Scripts\Mac\Script1.tg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\Windows\Script1.tg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.9" />
     <PackageReference Include="Akka.Logger.NLog" Version="1.3.3" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Messages\" />
-    <Folder Include="Messages\Log\" />
-    <Folder Include="Agents\" />
+    <Folder Include="Operations\Results\" />
+    <Folder Include="Util\" />
   </ItemGroup>
 </Project>

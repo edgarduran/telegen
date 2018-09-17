@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Akka.Actor;
 using telegen.Agents;
-using telegen.Messages;
-using telegen.Messages.Log;
+using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Actors
 {
@@ -19,10 +19,10 @@ namespace telegen.Actors
         protected IProcessAgent Agent { get; }
 
         protected void Listening() {
-            Receive<SpawnMsg>(m => Spawn(m));
+            Receive<OpSpawn>(m => Spawn(m));
         }
 
-        void Spawn(SpawnMsg msg)
+        void Spawn(OpSpawn msg)
         {
             var results = Agent.Spawn(msg);
             ActivityLogger.Tell(results, Self);

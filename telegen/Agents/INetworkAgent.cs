@@ -1,9 +1,11 @@
 ﻿using telegen.Actors;
+using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
     public interface INetworkAgent
     {
-        WebResp Execute(WebReq req);
+        NetResult Execute(WebReq req);
     }
 }

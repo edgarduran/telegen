@@ -1,0 +1,1 @@
+﻿## TEST SCRIPT 01 # PLATFORM: Windows#NET.GET http://www.google.comFILE.CREATE ".\\Tempfile.txt"FILE.APPENDLINE ".\\Tempfile.txt" 'Today is the first day of the rest of your life.'FILE.APPEND ".\\Tempfile.txt" '             --'FILE.APPENDLINE ".\\Tempfile.txt" ' Unknown'EXEC notepad  ".\\Tempfile.txt"WAIT 4000FILE.DELETE ".\\Tempfile.txt"

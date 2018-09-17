@@ -1,14 +1,13 @@
 ﻿using Newtonsoft.Json;
 
-namespace telegen.Messages
+namespace telegen.Operations
 {
-    public abstract class MsgBase
+    public abstract class Operation
     {
-        protected MsgBase()
+        protected Operation()
         {
         }
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }
-
 }

@@ -1,9 +1,9 @@
 ﻿using System;
-using telegen.Messages;
+using telegen.Operations;
 
-namespace telegen.Actors
+namespace telegen.Operations
 {
-    public class WebResp : MsgBase
+    public class WebResp : Operation
     {
         public WebResp(WebReq req, string response, DateTime utcTimeStamp, string clientName, int clientPort)
         {

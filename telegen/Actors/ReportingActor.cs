@@ -1,6 +1,6 @@
 ﻿using System;
 using telegen.Agents;
-using telegen.Messages.Log;
+using telegen.Operations.Results;
 
 namespace telegen.Actors
 {
@@ -9,7 +9,7 @@ namespace telegen.Actors
         public ReportingActor(IReportAgent agent = null)
         {
             Agent = agent ?? new ReportAgent();
-            Receive<LogEvent>(m => Agent.AddReportLine(m));
+            Receive<Result>(m => Agent.AddReportLine(m));
         }
 
         protected IReportAgent Agent { get; }

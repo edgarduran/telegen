@@ -1,10 +1,10 @@
-﻿using telegen.Messages;
-using telegen.Messages.Log;
+﻿using telegen.Operations;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
     public interface IProcessAgent
     {
-        Spawn Spawn(SpawnMsg msg);
+        SpawnResults Spawn(OpSpawn msg);
     }
 }
