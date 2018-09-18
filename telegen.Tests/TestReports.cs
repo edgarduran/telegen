@@ -26,7 +26,7 @@ namespace telegen.Tests
         [Fact]
         public void TestNLogReportsFromCustomReportAgent() {
 
-            var expected = "FileActivity,Create\nSpawns,";
+            var expected = "FileActivity,Create\nFileActivity,Delete";
 
             IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType}");
             foreach (var e in GetLogEventSet001())
@@ -51,12 +51,11 @@ namespace telegen.Tests
                 );
             yield return evt;
 
-            evt = new SpawnResults(
-                "Process",
+            evt = new FileActivityResult(
                 new System.DateTime(2000, 01, 01, 01, 00, 00, 00, 00),
-                001,
-                "Tester",
-                "commandline"
+                "Test.File",
+                FileEventType.Delete,
+                "Tester"
             );
             yield return evt;
         }

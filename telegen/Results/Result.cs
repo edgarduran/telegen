@@ -7,20 +7,20 @@ namespace telegen.Results
 {
     //todo: Add appropriate JsonProperty attributes to these classes
     public abstract class Result {
-        protected static string _thisProcessName = null;
-        protected static int _thisProcessId;
-        protected static string _thisProcessCommandLine;
-        protected static string _thisStartingFolder;
-        protected static string _thisUserName;
-        protected static DateTime _thisProcessStartTime;
-        protected static string _Machine;
-        protected static object _processLock = new object();
+        private static string _thisProcessName = null;
+        private static int _thisProcessId;
+        private static string _thisProcessCommandLine;
+        private static string _thisStartingFolder;
+        private static string _thisUserName;
+        private static DateTime _thisProcessStartTime;
+        private static string _machine;
+        private static readonly object ProcessLock = new object();
 
 
-        protected static void GetDefaults() {
+        private static void GetDefaults() {
             if (_thisProcessName == null)
             {
-                lock (_processLock)
+                lock (ProcessLock)
                 {
                     if (_thisProcessName == null)
                     {
@@ -31,7 +31,7 @@ namespace telegen.Results
                         _thisUserName = Environment.UserName;
                         _thisProcessCommandLine = Environment.CommandLine;
                         _thisStartingFolder = Environment.CurrentDirectory;
-                        _Machine = Environment.MachineName;
+                        _machine = Environment.MachineName;
                     }
                 }
             }
@@ -45,7 +45,7 @@ namespace telegen.Results
             UserName = _thisUserName;
             CommandLine = _thisProcessCommandLine;
             StartingFolder = _thisStartingFolder;
-            Machine = _Machine;
+            Machine = _machine;
         }
 
 
@@ -83,29 +83,4 @@ namespace telegen.Results
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }
-
-    public class MessageResult : Result
-    {
-        public string Message { get; }
-
-        public MessageResult(string message) {
-            Message = message;
-        }
-
-        public MessageResult(string message, Process p) : base(p)
-        {
-            Message = message;
-        }
-
-        public MessageResult(string message, string processName, DateTime utcStart, int procId) : base(processName, utcStart, procId)
-        {
-            Message = message;
-        }
-
-        public override void CopyToDictionary(IDictionary<object, object> d) {
-            base.CopyToDictionary(d);
-            d[nameof(Message)] = Message;
-        }
-    }
-
 }

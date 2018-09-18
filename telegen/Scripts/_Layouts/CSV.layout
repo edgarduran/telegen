@@ -1,1 +1,1 @@
-﻿{Type},{Machine},{StartingFolder},{CommandLine},{UserName},{UTCStart},{ProcessId},{ProcessName},{Protocol},{SourceAddress}{SourcePort},{DestAddress},{DestPort},{BytesSent},{FileEventType}{FileName},{ProcessName}{Parameters},{Message}
+﻿{Type},{Machine},{StartingFolder},{ProcessId},{ProcessName},{CommandLine},{UserName},{UTCStart},{Protocol},{SourceAddress},{SourcePort},{DestAddress},{DestPort},{BytesSent},{SpawnedProcessId},{SpawnedProcess},{SpawnedProcessParameters},{SpawnedProcessUserId},{FileEventType},{FileName},{Message}

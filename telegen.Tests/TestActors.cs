@@ -32,7 +32,7 @@ namespace telegen.Tests
             var spawner = Sys.ActorOf(Props.Create(() => new ProcessActor(a, null)));
             var appFile = IsWindows ? winFile : unxFile;
             spawner.Tell(new OpSpawn(appFile));
-            var msg = ExpectMsg<SpawnResults>();
+            var msg = ExpectMsg<SpawnResult>();
             output.WriteLine(msg.ToString());
             Assert.Equal(Environment.UserName, msg.UserName);
         }

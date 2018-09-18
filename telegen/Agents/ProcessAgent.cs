@@ -7,10 +7,10 @@ namespace telegen.Agents
 {
     public class ProcessAgent : IProcessAgent, IAgent
     {
-        public SpawnResults Spawn(OpSpawn msg)
+        public SpawnResult Spawn(OpSpawn msg)
         {
             var p = System.Diagnostics.Process.Start(msg.Executable, msg.Arguments);
-            return new SpawnResults(p, Environment.UserName, msg.Arguments);
+            return new SpawnResult(p, Environment.UserName, msg.Arguments);
         }
 
         public Result Execute(Operation oper)
