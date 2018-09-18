@@ -125,16 +125,16 @@ namespace telegen.Tests
         }
 
         [Theory]
-        [InlineData("http://images.perseusbooks.com")]
-        [InlineData("http://www.google.com")]
-        public void TestNetworkCall(string uri)
+        [InlineData("http://images.perseusbooks.com", "http://images.perseusbooks.com/")]
+        [InlineData("http://www.google.com", "http://www.google.com/")]
+        public void TestNetworkCall(string uri, string expected)
         { 
             var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor, null)), "Network");
             var msg = new OpNetGet(uri);
             client.Tell(msg);
             var resp = ExpectMsg<NetResult>(TimeSpan.FromSeconds(240));
             output.WriteLine(resp.ToString());
-            Assert.Contains(resp.DestAddress, uri);
+            Assert.Equal(expected, resp.DestAddress);
         }
 
     }

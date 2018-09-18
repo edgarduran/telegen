@@ -24,10 +24,15 @@ namespace telegen.Tests
         {
             this.output = output;
         }
+
         [Theory]
         [InlineData("Scripts\\_Layouts\\CSV.Layout")]
         [InlineData("Scripts\\_Layouts\\TSV.Layout")]
         public void TestLayout(string filename) {
+            if (!System.Environment.OSVersion.Platform.ToString().Contains("Win"))
+            {
+                filename = filename.Replace("\\", "/");
+            }
             var layout = ReportLayout.Open(filename);
             foreach (var f in layout.HeaderFields) {
                 output.WriteLine($"{f.Key} = {f.Value}");
