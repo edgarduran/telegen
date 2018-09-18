@@ -3,25 +3,26 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <ReleaseVersion>0.1.1</ReleaseVersion>
-    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <SynchReleaseVersion>true</SynchReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Scripts\Mac\Script1.tg" />
-    <None Remove="Scripts\Windows\CSV.layout" />
     <None Remove="Scripts\Windows\Script1.tg" />
+    <None Remove="Scripts\CSV.layout" />
+    <None Remove="Scripts\_Layouts\CSV.layout" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Scripts\Mac\Script1.tg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\Windows\CSV.layout">
+    <Content Include="Scripts\Windows\Script1.tg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\Windows\Script1.tg">
+    <Content Include="Scripts\_Layouts\CSV.layout">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -33,5 +34,11 @@
   <ItemGroup>
     <Folder Include="Operations\Results\" />
     <Folder Include="Util\" />
+    <Folder Include="Scripts\_Layouts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="telegen">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
