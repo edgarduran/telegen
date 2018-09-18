@@ -32,7 +32,7 @@ namespace telegen.Util
             set { _layout = _layout ?? value; }
         }
 
-        [JsonProperty("KeepCrLfs")]
+        [JsonProperty("KeepCrLf")]
         public bool KeepCrLfs { get; }
 
     }
