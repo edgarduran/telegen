@@ -2,7 +2,7 @@
   "profiles": {
     "telegen": {
       "commandName": "Project",
-      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\CSV.layout --clear"
+      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Output\\\\WindowsScript1.csv --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\_Layouts\\\\CSV.layout --clear"
     }
   }
 }

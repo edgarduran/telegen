@@ -10,11 +10,6 @@ namespace telegen.Agents
     {
         protected ILogger log = new NullLogger(new LogFactory());
 
-        //public NLogReportAgent(string layout)
-        //{
-        //    log = ConfigureNLog(null, layout);
-        //}
-
         public bool HeadersAreRequired => false;
 
         public bool FootersAreRequired => true;
@@ -23,7 +18,6 @@ namespace telegen.Agents
         {
             // Do Nothing
         }
-
 
         public void EmitDetailLine(Result logEntry)
         {
@@ -56,7 +50,7 @@ namespace telegen.Agents
                     case startName:
                         if (inName)
                         {
-                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
+                            throw new Exception($"Malformed custom layout near position {pos} : {def.Substring(0, pos)}");
                         }
                         else
                         {
@@ -72,7 +66,7 @@ namespace telegen.Agents
                         }
                         else
                         {
-                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
+                            throw new Exception($"Malformed custom layout near position {pos} : {def.Substring(0, pos)}");
                         }
                         break;
                     default:
@@ -88,7 +82,8 @@ namespace telegen.Agents
 
                 }
             }
-
+            if (inName) throw new Exception($"Malformed custom layout in name '{name}'.");
+            if (string.IsNullOrWhiteSpace(layout)) throw new Exception($"Malformed custom layout: no layout found.");
             return layout;
         }
 

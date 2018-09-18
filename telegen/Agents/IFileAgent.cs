@@ -9,9 +9,4 @@ namespace telegen.Agents
         FileActivityResult DeleteFile(OpDeleteFile msg);
         FileActivityResult UpdateFile(OpUpdateFile msg);
     }
-
-    public interface IAgent
-    {
-        Result Execute(Operation oper);
-    }
 }

@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 
-namespace telegen
+namespace telegen.host
 {
     public static class RootActors
     {

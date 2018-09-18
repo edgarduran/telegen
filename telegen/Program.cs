@@ -57,7 +57,7 @@ namespace telegen
                 }
             }
 
-            if (cmd.ContainsSwitch("clear")) File.Delete(outFile);
+            if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
             
 
             IReportAgent rpt;

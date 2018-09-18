@@ -14,7 +14,28 @@ namespace telegen.Agents
         protected override ILogger ConfigureNLog(string filename, string customLayout)
         {
             var cfg = new LoggingConfiguration();
-            var tgt = new FileTarget("fileWriter") { FileName = filename, Layout = BuildLayout(customLayout) };
+
+#if DEBUG
+            // Setup the logging view for Sentinel - http://sentinel.codeplex.com
+            var sentinelTarget = new NLogViewerTarget()
+            {
+                Name = "sentinel",
+                Address = "udp://127.0.0.1:9999",
+                IncludeNLogData = true,
+                Layout = BuildLayout(customLayout)
+            };
+            var sentinelRule = new LoggingRule("*", LogLevel.Trace, sentinelTarget);
+            cfg.AddTarget("sentinel", sentinelTarget);
+            cfg.LoggingRules.Add(sentinelRule);
+
+#endif
+            var tgt = new FileTarget("fileWriter")
+            {
+                Name = "FileWriter",
+                FileName = filename,
+                Layout = BuildLayout(customLayout)
+            };
+            cfg.AddTarget(tgt);
             cfg.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, tgt));
             LogManager.Configuration = cfg;
 

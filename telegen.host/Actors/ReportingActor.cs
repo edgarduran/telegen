@@ -1,8 +1,4 @@
-﻿using System;
-using telegen.Agents;
-using telegen.Operations.Results;
-
-namespace telegen.Actors
+﻿namespace telegen.host.Actors
 {
     //public class ReportingActor : TelegenActor
     //{

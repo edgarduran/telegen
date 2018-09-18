@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using telegen.Actors;
 using telegen.Operations;
 using telegen.Operations.Results;
 
@@ -81,9 +80,9 @@ namespace telegen.Agents
 
         public Result Execute(Operation oper)
         {
-            if (oper is OpNetGet)
+            if (oper is OpNetGet op)
             {
-                var op = oper as OpNetGet;
+                //var op = oper as OpNetGet;
                 var req = new WebReq(op.Address);
                 return Execute(req);
             }

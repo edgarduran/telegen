@@ -1,7 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 
-namespace telegen
+namespace telegen.host
 {
     public class ActorSystemHost : IDisposable
     {

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
-using telegen.Actors;
+using telegen.host.Actors;
 using telegen.Operations;
 using telegen.Operations.Results;
 using Xunit;
@@ -126,14 +126,15 @@ namespace telegen.Tests
 
         [Theory]
         [InlineData("http://images.perseusbooks.com")]
+        [InlineData("http://www.google.com")]
         public void TestNetworkCall(string uri)
         { 
             var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor, null)), "Network");
             var msg = new OpNetGet(uri);
             client.Tell(msg);
-            var resp = ExpectMsg<WebResp>(TimeSpan.FromSeconds(5));
+            var resp = ExpectMsg<NetResult>(TimeSpan.FromSeconds(240));
             output.WriteLine(resp.ToString());
-
+            Assert.Contains(resp.DestAddress, uri);
         }
 
     }

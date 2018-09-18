@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
-namespace telegen.Actors
+namespace telegen.host.Actors
 {
     public abstract class TelegenActor : ReceiveActor
     {

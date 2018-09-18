@@ -6,6 +6,7 @@ using telegen.Agents;
 using telegen.Operations.Results;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace telegen.Tests
 {
@@ -21,47 +22,23 @@ namespace telegen.Tests
             this.output = output;
         }
 
-
         [Fact]
-        public void TestNLogReportsFromReportAgent()
-        {
-            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType");
-            foreach (var e in GetLogEventSet001()) agent.EmitDetailLine(e);
+        public void TestNLogReportsFromCustomReportAgent() {
 
-            var expected = new List<string>
-            {
-                @"{""FileName"":""Test.File"",""FileEventType"":""Create"",""UserName"":""Tester"",""CommandLine"":null,""ProcessName"":""dotnet"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":18966}",
-                @"{""CommandLine"":""commandline"",""UserName"":""Tester"",""ProcessName"":""Process"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":1}"
-            };
+            var expected = @"FileActivity,Create
+Spawns,";
+
+            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType}");
+            foreach (var e in GetLogEventSet001())
+                agent.EmitDetailLine(e);
 
             //read the logs here
-            agent.EmitFooter();
-            var logs = agent.ToString(); 
-            output.WriteLine(logs);
+            agent.EmitFooter(); // Flush the buffer
 
-            Assert.True(expected.Contains(logs));
-        }
-
-
-
-        [Fact]
-        public void TestNLogReportsFromCustomReportAgent()
-        {
-            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType");
-            foreach (var e in GetLogEventSet001()) agent.EmitDetailLine(e);
-
-            var expected = new List<string>
-            {
-                @"{""FileName"":""Test.File"",""FileEventType"":""Create"",""UserName"":""Tester"",""CommandLine"":null,""ProcessName"":""dotnet"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":18966}",
-                @"{""CommandLine"":""commandline"",""UserName"":""Tester"",""ProcessName"":""Process"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":1}"
-            };
-
-            //read the logs here
-            agent.EmitFooter();
             var logs = agent.ToString();
             output.WriteLine(logs);
 
-            Assert.True(expected.Contains(logs));
+            Assert.Equal(expected, logs);
         }
 
         public IEnumerable<Result> GetLogEventSet001()
