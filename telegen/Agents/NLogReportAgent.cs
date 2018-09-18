@@ -1,23 +1,32 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using NLog;
 using NLog.Layouts;
 using telegen.Agents.Interfaces;
 using telegen.Results;
+using telegen.Util;
 
 namespace telegen.Agents
 {
 
     public abstract class NLogReportAgent : IReportAgent
     {
+        protected ReportLayout ReportLayout { get; set; }
         protected ILogger log = new NullLogger(new LogFactory());
 
         public bool HeadersAreRequired => false;
 
         public bool FootersAreRequired => true;
 
-        public void EmitHeader(dynamic header = null)
-        {
-            // Do Nothing
+        public virtual void EmitHeader(dynamic header = null) {
+            if (ReportLayout == null) return;
+            if (!ReportLayout.HeaderFields.Any()) return;
+            var evt = new LogEventInfo(LogLevel.Info, log.Name, "Header");
+            var hf = ReportLayout.HeaderFields;
+            foreach (var k in hf.Keys) evt.Properties[k] = hf[k];
+            log.Info(evt);
         }
 
         public void EmitDetailLine(Result logEntry)

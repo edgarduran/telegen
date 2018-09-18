@@ -1,14 +1,15 @@
 ﻿using NLog;
 using NLog.Config;
 using NLog.Targets;
+using telegen.Util;
 
 namespace telegen.Agents
 {
     public class CustomReportAgent : NLogReportAgent
     {
-        public CustomReportAgent(string filename, string layout)
-        {
-            log = ConfigureNLog(filename, layout);
+        public CustomReportAgent(string filename, ReportLayout layout) {
+            ReportLayout = layout;
+            log = ConfigureNLog(filename, layout.Layout);
         }
 
         protected override ILogger ConfigureNLog(string filename, string customLayout)

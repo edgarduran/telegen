@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
 using telegen.Agents;
 using telegen.Agents.Interfaces;
 using telegen.Results;
+using telegen.Util;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -21,6 +23,18 @@ namespace telegen.Tests
         public TestReports(ITestOutputHelper output)
         {
             this.output = output;
+        }
+        [Theory]
+        [InlineData("Scripts\\_Layouts\\CSV.Layout")]
+        [InlineData("Scripts\\_Layouts\\TSV.Layout")]
+        public void TestLayout(string filename) {
+            var layout = ReportLayout.Open(filename);
+            foreach (var f in layout.HeaderFields) {
+                output.WriteLine($"{f.Key} = {f.Value}");
+            }
+            output.WriteLine(layout.Layout);
+
+
         }
 
         [Fact]

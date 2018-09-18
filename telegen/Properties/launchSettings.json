@@ -3,6 +3,18 @@
     "telegen": {
       "commandName": "Project",
       "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Output\\\\WindowsScript1.csv --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\_Layouts\\\\CSV.layout --clear"
+    },
+    "Tabbed": {
+      "commandName": "Project",
+      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Output\\\\WindowsScript1.tsv --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\_Layouts\\\\TSV.layout --clear"
+    },
+    "CSV": {
+      "commandName": "Project",
+      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Output\\\\WindowsScript1.csv --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\_Layouts\\\\CSV.layout --clear"
+    },
+    "Bar Separated": {
+      "commandName": "Project",
+      "commandLineArgs": "P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Windows\\\\Script1.tg P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\Output\\\\WindowsScript1.bsv --format=P:\\\\telegen\\\\telegen\\\\bin\\\\Debug\\\\netcoreapp2.1\\\\Scripts\\\\_Layouts\\\\BSV.layout --clear"
     }
   }
 }

@@ -23,8 +23,8 @@
 		"Message": "Message"
 	},
 	"KeepCrLf" : false,
-	"Layout": "{Type},{Machine},{StartingFolder},{ProcessId},{ProcessName},{CommandLine},
-{UserName},{UTCStart},{Protocol},{SourceAddress},{SourcePort},{DestAddress},{DestPort},
-{BytesSent},{SpawnedProcessId},{SpawnedProcess},{SpawnedProcessParameters},{SpawnedProcessUserId},
-{FileEventType},{FileName},{Message}"
+	"Layout": "{Type}\t{Machine}\t{StartingFolder}\t{ProcessId}\t{ProcessName}\t{CommandLine}\t
+{UserName}\t{UTCStart}\t{Protocol}\t{SourceAddress}\t{SourcePort}\t{DestAddress}\t{DestPort}\t
+{BytesSent}\t{SpawnedProcessId}\t{SpawnedProcess}\t{SpawnedProcessParameters}\t{SpawnedProcessUserId}\t
+{FileEventType}\t{FileName}\t{Message}"
 }

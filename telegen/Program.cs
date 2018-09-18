@@ -47,31 +47,27 @@ namespace telegen
             var echoOn = cmd.ContainsSwitch("echo");
 
             var useCustomLayout = cmd.ContainsSwitch("format");
-            string customLayout = null;
+            ReportLayout customLayout = null;
+            IReportAgent rpt;
+
             if (useCustomLayout) {
                 var customLayoutFile = cmd.Switches.format;
                 if (File.Exists(customLayoutFile)) {
-                    customLayout = File.ReadAllText(customLayoutFile);
+                    //customLayout = File.ReadAllText(customLayoutFile);
+                    customLayout = ReportLayout.Open(customLayoutFile);
                 } else {
                     throw new Exception($"ERR: Could not find requested layout file ({customLayoutFile})");
                 }
-            }
-
-            if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
-            
-
-            IReportAgent rpt;
-            if (useCustomLayout)
-            {
-                rpt = new CustomReportAgent(outFile, customLayout); 
+                rpt = new CustomReportAgent(outFile, customLayout);
             } else {
                 rpt = new JSONReportAgent(outFile);
             }
 
-            var engine = new ScriptEngine();
-
+            if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
+            
             rpt.EmitHeader();
 
+            var engine = new ScriptEngine();
             foreach (var logEntry in engine.Execute(scriptFile)) {
                 if (logEntry == null) continue;
                 rpt.EmitDetailLine(logEntry);
