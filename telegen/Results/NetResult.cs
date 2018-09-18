@@ -26,7 +26,7 @@ namespace telegen.Results
         {
             SourceAddress = r.ClientName;
             SourcePort = r.ClientPort;
-            DestAddress = r.Request.Uri.Host;
+            DestAddress = r.Request.Uri.ToString();
             DestPort = r.Request.Uri.Port;
             BytesSent = r.Request.ToString().Length;
             Protocol = r.Request.Uri.Scheme;
