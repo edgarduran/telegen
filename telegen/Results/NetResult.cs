@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using telegen.Operations;
 
-namespace telegen.Operations.Results
+namespace telegen.Results
 {
     public class NetResult : Result
     {

@@ -2,8 +2,9 @@
 using Akka.Actor;
 using Akka.Routing;
 using telegen.Agents;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 
 namespace telegen.host.Actors
 {

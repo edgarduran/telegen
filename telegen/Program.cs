@@ -7,7 +7,7 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using telegen.Agents;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
 using telegen.Util;
 
 namespace telegen

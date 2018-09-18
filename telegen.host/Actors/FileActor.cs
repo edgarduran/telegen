@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using telegen.Agents;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
 
 namespace telegen.host.Actors

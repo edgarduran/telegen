@@ -3,7 +3,8 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 using telegen.Agents;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
+using telegen.Results;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -25,8 +26,7 @@ namespace telegen.Tests
         [Fact]
         public void TestNLogReportsFromCustomReportAgent() {
 
-            var expected = @"FileActivity,Create
-Spawns,";
+            var expected = "FileActivity,Create\nSpawns,";
 
             IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType}");
             foreach (var e in GetLogEventSet001())

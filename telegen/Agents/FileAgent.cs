@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 
 namespace telegen.Agents
 {

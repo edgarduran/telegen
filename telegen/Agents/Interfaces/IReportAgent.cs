@@ -1,7 +1,7 @@
 ﻿using System;
-using telegen.Operations.Results;
+using telegen.Results;
 
-namespace telegen.Agents
+namespace telegen.Agents.Interfaces
 {
     public interface IReportAgent : IDisposable
     {

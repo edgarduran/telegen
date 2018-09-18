@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace telegen.Operations.Results
+namespace telegen.Results
 {
     public class FileActivityResult : Result
     {

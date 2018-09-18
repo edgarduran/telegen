@@ -2,8 +2,9 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 
 namespace telegen.Agents
 {

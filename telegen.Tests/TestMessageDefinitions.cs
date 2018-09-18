@@ -1,5 +1,5 @@
 ﻿using System;
-using telegen.Operations.Results;
+using telegen.Results;
 using Xunit;
 using Xunit.Abstractions;
 

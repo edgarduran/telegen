@@ -1,6 +1,7 @@
 ﻿using System;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 
 namespace telegen.Agents
 {

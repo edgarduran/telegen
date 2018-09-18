@@ -32,7 +32,7 @@
     <PackageReference Include="NLog" Version="4.5.10" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Operations\Results\" />
+    <Folder Include="Results\" />
     <Folder Include="Util\" />
     <Folder Include="Scripts\_Layouts\" />
   </ItemGroup>

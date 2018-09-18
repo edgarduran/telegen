@@ -1,7 +1,8 @@
 ﻿using System;
 using NLog;
 using NLog.Layouts;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
+using telegen.Results;
 
 namespace telegen.Agents
 {

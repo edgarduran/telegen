@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using telegen.Agents;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
+using telegen.Results;
 
 namespace telegen
 {

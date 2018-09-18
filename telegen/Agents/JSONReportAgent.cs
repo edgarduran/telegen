@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
+using telegen.Results;
 
 namespace telegen.Agents
 {

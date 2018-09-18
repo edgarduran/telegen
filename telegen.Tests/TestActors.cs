@@ -4,7 +4,7 @@ using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using telegen.host.Actors;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -52,7 +52,7 @@ namespace telegen.Tests
                 #region Test Create File
                 fileActor.Tell(new OpCreateFile(folder, filename));
 
-                var createLog = ExpectMsg<Operations.Results.FileActivityResult>();
+                var createLog = ExpectMsg<FileActivityResult>();
                 output.WriteLine(createLog.ToString());
                 Assert.Equal(Environment.UserName, createLog.UserName);
                 Assert.Equal(filePath, createLog.FileName);
@@ -81,7 +81,7 @@ namespace telegen.Tests
                 #region Test Update File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Updater");
                 fileActor.Tell(new OpUpdateFile(filePath, "Gotta stick something in here!"));
-                var updateLog = ExpectMsg<Operations.Results.FileActivityResult>();
+                var updateLog = ExpectMsg<FileActivityResult>();
                 output.WriteLine(updateLog.ToString());
                 Assert.Equal(Environment.UserName, updateLog.UserName);
                 Assert.Equal(filePath, updateLog.FileName);
