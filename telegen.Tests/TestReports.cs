@@ -15,9 +15,6 @@ namespace telegen.Tests
 
         protected MemoryTarget EmittedLogs { get; set; }
 
-        protected const string BasicNLogLayout = "${message}";
-        protected const string CustomNLogLayout = @"${event-properties:item=_Type},${event-properties:item=UTCStart},""${event-properties:item=ProcessName}"",${event-properties:item=ProcessId},${event-properties:item=UserName},${event-properties:item=FileEventType}";
-        protected const string TestNLogLayout = "[${event-properties:item=UTCStart}]";
 
         public TestReports(ITestOutputHelper output)
         {
@@ -25,24 +22,11 @@ namespace telegen.Tests
         }
 
 
-
-        protected void InitNLogContext(string layout)
-        {
-            //init with empty configuration. Add one target and one rule
-            var configuration = new NLog.Config.LoggingConfiguration();
-            EmittedLogs = new MemoryTarget { Name = "mem", Layout = layout};
-
-            configuration.AddTarget(EmittedLogs);
-            configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, EmittedLogs));
-            LogManager.Configuration = configuration;
-        }
-
         [Fact]
         public void TestNLogReportsFromReportAgent()
         {
-            InitNLogContext(BasicNLogLayout);
-            IReportAgent agent = new ReportAgent();
-            foreach (var e in GetLogEventSet001()) agent.AddReportLine(e);
+            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType");
+            foreach (var e in GetLogEventSet001()) agent.EmitDetailLine(e);
 
             var expected = new List<string>
             {
@@ -51,13 +35,11 @@ namespace telegen.Tests
             };
 
             //read the logs here
-            LogManager.Flush();
-            var logs = EmittedLogs.Logs;
-            foreach (var log in logs)
-            {
-                output.WriteLine(log);
-            }
-            Assert.All(logs, s => expected.Contains(s));
+            agent.EmitFooter();
+            var logs = agent.ToString(); 
+            output.WriteLine(logs);
+
+            Assert.True(expected.Contains(logs));
         }
 
 
@@ -65,9 +47,8 @@ namespace telegen.Tests
         [Fact]
         public void TestNLogReportsFromCustomReportAgent()
         {
-            InitNLogContext(CustomNLogLayout);
-            IReportAgent agent = new CustomizableReportAgent();
-            foreach (var e in GetLogEventSet001()) agent.AddReportLine(e);
+            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType");
+            foreach (var e in GetLogEventSet001()) agent.EmitDetailLine(e);
 
             var expected = new List<string>
             {
@@ -76,13 +57,11 @@ namespace telegen.Tests
             };
 
             //read the logs here
-            LogManager.Flush();
-            var logs = EmittedLogs.Logs;
-            foreach (var log in logs)
-            {
-                output.WriteLine(log);
-            }
-            //Assert.All(logs, s => expected.Contains(s));
+            agent.EmitFooter();
+            var logs = agent.ToString();
+            output.WriteLine(logs);
+
+            Assert.True(expected.Contains(logs));
         }
 
         public IEnumerable<Result> GetLogEventSet001()

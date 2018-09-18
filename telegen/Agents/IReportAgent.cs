@@ -1,9 +1,16 @@
-﻿using telegen.Operations.Results;
+﻿using System;
+using telegen.Operations.Results;
 
 namespace telegen.Agents
 {
-    public interface IReportAgent
+    public interface IReportAgent : IDisposable
     {
-        void AddReportLine(Result evt);
+        bool HeadersAreRequired { get; }
+        bool FootersAreRequired { get; }
+        void EmitHeader(dynamic header = null);
+        void EmitDetailLine(Result evt);
+        void EmitFooter();
     }
+
+
 }
