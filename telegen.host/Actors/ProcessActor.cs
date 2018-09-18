@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Akka.Actor;
+﻿using Akka.Actor;
 using telegen.Agents;
+using telegen.Agents.Interfaces;
 using telegen.Operations;
-using telegen.Operations.Results;
 
-namespace telegen.Actors
+namespace telegen.host.Actors
 {
 
     public class ProcessActor : TelegenActor

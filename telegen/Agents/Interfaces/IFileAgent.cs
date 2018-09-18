@@ -1,17 +1,12 @@
 ﻿using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 
-namespace telegen.Agents
+namespace telegen.Agents.Interfaces
 {
     public interface IFileAgent
     {
         FileActivityResult CreateFile(OpCreateFile msg);
         FileActivityResult DeleteFile(OpDeleteFile msg);
         FileActivityResult UpdateFile(OpUpdateFile msg);
-    }
-
-    public interface IAgent
-    {
-        Result Execute(Operation oper);
     }
 }

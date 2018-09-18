@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Akka.Actor;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
-using telegen.Operations.Results;
+using telegen.Agents;
+using telegen.Agents.Interfaces;
 using telegen.Util;
 
 namespace telegen
@@ -47,42 +47,34 @@ namespace telegen
             var echoOn = cmd.ContainsSwitch("echo");
 
             var useCustomLayout = cmd.ContainsSwitch("format");
-            string customLayout = null;
+            ReportLayout customLayout = null;
+            IReportAgent rpt;
+
             if (useCustomLayout) {
                 var customLayoutFile = cmd.Switches.format;
                 if (File.Exists(customLayoutFile)) {
-                    customLayout = File.ReadAllText(customLayoutFile);
+                    //customLayout = File.ReadAllText(customLayoutFile);
+                    customLayout = ReportLayout.Open(customLayoutFile);
                 } else {
                     throw new Exception($"ERR: Could not find requested layout file ({customLayoutFile})");
                 }
+                rpt = new CustomReportAgent(outFile, customLayout);
+            } else {
+                rpt = new JSONReportAgent(outFile);
             }
 
-            if (cmd.ContainsSwitch("clear")) File.Delete(outFile);
+            if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
             
-            ILogger log = new NullLogger(new LogFactory());
-            if (useCustomLayout) {
-                log = ConfigureNLog(outFile, customLayout);
-            } else { 
-            var header = $@"[ 
-{{ ""source"": ""telegen v{version}"" }}";
-                File.WriteAllText(outFile, header);
-            }
+            rpt.EmitHeader();
 
             var engine = new ScriptEngine();
             foreach (var logEntry in engine.Execute(scriptFile)) {
                 if (logEntry == null) continue;
-                var text = logEntry.ToString();
-                if (useCustomLayout) {
-                    var evt = new LogEventInfo(LogLevel.Info, log.Name, logEntry.GetType().Name);
-                    logEntry.CopyToDictionary(evt.Properties);
-                    log.Info(evt);
-                } else {                    
-                    File.AppendAllText(outFile, ",\n" + text);
-                }
-
-                if (echoOn) Console.WriteLine(text);
+                rpt.EmitDetailLine(logEntry);
+                if (echoOn) Console.WriteLine(logEntry.ToString());
             }
-            File.AppendAllText(outFile, "\n]");
+
+            rpt.EmitFooter();
 
             Console.WriteLine("\n\nScript complete.\n");
             
@@ -97,56 +89,6 @@ namespace telegen
             #endregion
         }
 
-        private static ILogger ConfigureNLog(string filename, string customLayout) {
-            var cfg = new LoggingConfiguration();
-            var tgt = new FileTarget("fileWriter") {FileName=filename, Layout = BuildLayout(customLayout)};
-            cfg.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, tgt));
-            LogManager.Configuration = cfg;
-            return LogManager.GetLogger("Reporter");
-        }
-
-        private static Layout BuildLayout(string def) {
-            var layout = string.Empty;
-            var name = string.Empty;
-            const char startName = '{';
-            const char endName = '}';
-
-            bool inName = false;
-            var pos = 0;
-            foreach (var c in def.ToCharArray()) {
-                pos++;
-                switch (c) {
-                    case startName:
-                        if (inName) {
-                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
-                        } else {
-                            inName = true;
-                        }
-                        break;
-                    case endName:
-                        if (inName) {
-                            inName = false;
-                            layout += $"${{event-properties:item={name}}}";
-                            name = String.Empty;
-                        }
-                        else
-                        {
-                            throw new Exception($"Malformed layout near position {pos} : {def.Substring(0, pos)}");
-                        }
-                        break;
-                    default:
-                        if (inName) {
-                            name += c;
-                        } else {
-                            layout += c;
-                        }
-                        break;
-
-                }
-            }
-
-            return layout;
-        }
 
         private static void SetDefaults() {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -195,25 +137,4 @@ namespace telegen
     }
 
 
-    public class ActorSystemHost : IDisposable
-    {
-        ActorSystem _system = null;
-        public ActorSystemHost()
-        {
-            _system = ActorSystem.Create("TeleGen");
-
-        }
-
-        public void Dispose()
-        {
-            _system.Dispose();
-        }
-    }
-
-
-    public static class RootActors
-    {
-        public static IActorRef CommandParser { get; private set; }
-        public static IActorRef Log { get; private set; }
-    }
 }

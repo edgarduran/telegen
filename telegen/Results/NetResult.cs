@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using telegen.Operations;
 
-namespace telegen.Operations.Results
+namespace telegen.Results
 {
     public class NetResult : Result
     {
@@ -25,7 +26,7 @@ namespace telegen.Operations.Results
         {
             SourceAddress = r.ClientName;
             SourcePort = r.ClientPort;
-            DestAddress = r.Request.Uri.Host;
+            DestAddress = r.Request.Uri.ToString();
             DestPort = r.Request.Uri.Port;
             BytesSent = r.Request.ToString().Length;
             Protocol = r.Request.Uri.Scheme;

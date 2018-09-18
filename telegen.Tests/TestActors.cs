@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
-using telegen.Actors;
+using telegen.host.Actors;
 using telegen.Operations;
-using telegen.Operations.Results;
+using telegen.Results;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,7 +32,7 @@ namespace telegen.Tests
             var spawner = Sys.ActorOf(Props.Create(() => new ProcessActor(a, null)));
             var appFile = IsWindows ? winFile : unxFile;
             spawner.Tell(new OpSpawn(appFile));
-            var msg = ExpectMsg<SpawnResults>();
+            var msg = ExpectMsg<SpawnResult>();
             output.WriteLine(msg.ToString());
             Assert.Equal(Environment.UserName, msg.UserName);
         }
@@ -52,7 +52,7 @@ namespace telegen.Tests
                 #region Test Create File
                 fileActor.Tell(new OpCreateFile(folder, filename));
 
-                var createLog = ExpectMsg<Operations.Results.FileActivityResult>();
+                var createLog = ExpectMsg<FileActivityResult>();
                 output.WriteLine(createLog.ToString());
                 Assert.Equal(Environment.UserName, createLog.UserName);
                 Assert.Equal(filePath, createLog.FileName);
@@ -81,7 +81,7 @@ namespace telegen.Tests
                 #region Test Update File
                 var fileActor = Sys.ActorOf(Props.Create(() => new FileActor(a, null)), "Updater");
                 fileActor.Tell(new OpUpdateFile(filePath, "Gotta stick something in here!"));
-                var updateLog = ExpectMsg<Operations.Results.FileActivityResult>();
+                var updateLog = ExpectMsg<FileActivityResult>();
                 output.WriteLine(updateLog.ToString());
                 Assert.Equal(Environment.UserName, updateLog.UserName);
                 Assert.Equal(filePath, updateLog.FileName);
@@ -125,15 +125,16 @@ namespace telegen.Tests
         }
 
         [Theory]
-        [InlineData("http://images.perseusbooks.com")]
-        public void TestNetworkCall(string uri)
+        [InlineData("http://images.perseusbooks.com", "http://images.perseusbooks.com/")]
+        [InlineData("http://www.google.com", "http://www.google.com/")]
+        public void TestNetworkCall(string uri, string expected)
         { 
             var client = Sys.ActorOf(Props.Create(() => new NetworkActor(TestActor, null)), "Network");
             var msg = new OpNetGet(uri);
             client.Tell(msg);
-            var resp = ExpectMsg<WebResp>(TimeSpan.FromSeconds(5));
+            var resp = ExpectMsg<NetResult>(TimeSpan.FromSeconds(240));
             output.WriteLine(resp.ToString());
-
+            Assert.Equal(expected, resp.DestAddress);
         }
 
     }

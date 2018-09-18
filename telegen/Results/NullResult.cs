@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace telegen.Operations.Results
+namespace telegen.Results
 {
     public class NullResult : Result
     {

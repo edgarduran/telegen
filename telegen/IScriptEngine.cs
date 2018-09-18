@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using telegen.Operations.Results;
+using telegen.Results;
 
 namespace telegen
 {

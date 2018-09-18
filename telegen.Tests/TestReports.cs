@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
 using telegen.Agents;
-using telegen.Operations.Results;
+using telegen.Agents.Interfaces;
+using telegen.Results;
+using telegen.Util;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace telegen.Tests
 {
@@ -15,74 +19,45 @@ namespace telegen.Tests
 
         protected MemoryTarget EmittedLogs { get; set; }
 
-        protected const string BasicNLogLayout = "${message}";
-        protected const string CustomNLogLayout = @"${event-properties:item=_Type},${event-properties:item=UTCStart},""${event-properties:item=ProcessName}"",${event-properties:item=ProcessId},${event-properties:item=UserName},${event-properties:item=FileEventType}";
-        protected const string TestNLogLayout = "[${event-properties:item=UTCStart}]";
 
         public TestReports(ITestOutputHelper output)
         {
             this.output = output;
         }
 
+        [Theory]
+        [InlineData("Scripts\\_Layouts\\CSV.Layout")]
+        [InlineData("Scripts\\_Layouts\\TSV.Layout")]
+        public void TestLayout(string filename) {
+            if (!System.Environment.OSVersion.Platform.ToString().Contains("Win"))
+            {
+                filename = filename.Replace("\\", "/");
+            }
+            var layout = ReportLayout.Open(filename);
+            foreach (var f in layout.HeaderFields) {
+                output.WriteLine($"{f.Key} = {f.Value}");
+            }
+            output.WriteLine(layout.Layout);
 
 
-        protected void InitNLogContext(string layout)
-        {
-            //init with empty configuration. Add one target and one rule
-            var configuration = new NLog.Config.LoggingConfiguration();
-            EmittedLogs = new MemoryTarget { Name = "mem", Layout = layout};
-
-            configuration.AddTarget(EmittedLogs);
-            configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, EmittedLogs));
-            LogManager.Configuration = configuration;
         }
 
         [Fact]
-        public void TestNLogReportsFromReportAgent()
-        {
-            InitNLogContext(BasicNLogLayout);
-            IReportAgent agent = new ReportAgent();
-            foreach (var e in GetLogEventSet001()) agent.AddReportLine(e);
+        public void TestNLogReportsFromCustomReportAgent() {
 
-            var expected = new List<string>
-            {
-                @"{""FileName"":""Test.File"",""FileEventType"":""Create"",""UserName"":""Tester"",""CommandLine"":null,""ProcessName"":""dotnet"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":18966}",
-                @"{""CommandLine"":""commandline"",""UserName"":""Tester"",""ProcessName"":""Process"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":1}"
-            };
+            var expected = "FileActivity,Create\nFileActivity,Delete";
+
+            IReportAgent agent = new MemoryReportAgent("{Type},{FileEventType}");
+            foreach (var e in GetLogEventSet001())
+                agent.EmitDetailLine(e);
 
             //read the logs here
-            LogManager.Flush();
-            var logs = EmittedLogs.Logs;
-            foreach (var log in logs)
-            {
-                output.WriteLine(log);
-            }
-            Assert.All(logs, s => expected.Contains(s));
-        }
+            agent.EmitFooter(); // Flush the buffer
 
+            var logs = agent.ToString();
+            output.WriteLine(logs);
 
-
-        [Fact]
-        public void TestNLogReportsFromCustomReportAgent()
-        {
-            InitNLogContext(CustomNLogLayout);
-            IReportAgent agent = new CustomizableReportAgent();
-            foreach (var e in GetLogEventSet001()) agent.AddReportLine(e);
-
-            var expected = new List<string>
-            {
-                @"{""FileName"":""Test.File"",""FileEventType"":""Create"",""UserName"":""Tester"",""CommandLine"":null,""ProcessName"":""dotnet"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":18966}",
-                @"{""CommandLine"":""commandline"",""UserName"":""Tester"",""ProcessName"":""Process"",""UTCStart"":""2000-01-01T01:00:00"",""TimeString"":""2000-01-01 01:00:00Z"",""ProcessId"":1}"
-            };
-
-            //read the logs here
-            LogManager.Flush();
-            var logs = EmittedLogs.Logs;
-            foreach (var log in logs)
-            {
-                output.WriteLine(log);
-            }
-            //Assert.All(logs, s => expected.Contains(s));
+            Assert.Equal(expected, logs);
         }
 
         public IEnumerable<Result> GetLogEventSet001()
@@ -95,12 +70,11 @@ namespace telegen.Tests
                 );
             yield return evt;
 
-            evt = new SpawnResults(
-                "Process",
+            evt = new FileActivityResult(
                 new System.DateTime(2000, 01, 01, 01, 00, 00, 00, 00),
-                001,
-                "Tester",
-                "commandline"
+                "Test.File",
+                FileEventType.Delete,
+                "Tester"
             );
             yield return evt;
         }
