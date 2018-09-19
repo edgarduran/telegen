@@ -43,6 +43,16 @@ namespace telegen.Agents
 
         protected abstract ILogger ConfigureNLog(string filename, string customLayout);
 
+        /// <summary>
+        /// This method is responsible for parsing the layout string, and translating it
+        /// into the format required by the reporting engine... in this case, NLog. The
+        /// method is declared <c>virtual</c> so that other implementations can use the
+        /// existing NLog tooling, but with a different layout string dialect.
+        /// </summary>
+        /// <param name="def">The generic layout definition.</param>
+        /// <returns>An NLog <see cref="Layout"/> object.</returns>
+        /// <exception cref="Exception">
+        /// </exception>
         protected virtual Layout BuildLayout(string def)
         {
             var layout = string.Empty;

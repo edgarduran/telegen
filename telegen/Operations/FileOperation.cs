@@ -1,6 +1,10 @@
 ﻿using System;
 namespace telegen.Operations
 {
+    /// <summary>
+    /// Represents a generic operation targeting the file system.
+    /// </summary>
+    /// <seealso cref="telegen.Operations.Operation" />
     public abstract class FileOperation : Operation
     {
         protected FileOperation(string fullname)
