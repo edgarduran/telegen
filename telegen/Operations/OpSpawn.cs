@@ -2,14 +2,12 @@
 
 namespace telegen.Operations
 {
+    /// <summary>
+    /// Launch an application, optionally passing arguments via the command line.
+    /// </summary>
+    /// <seealso cref="telegen.Operations.Operation" />
     public class OpSpawn : Operation
     {
-        //public SpawnMsg(string exe, string arguments = null)
-        //{
-        //    Executable = exe;
-        //    Arguments = arguments ?? string.Empty;
-        //}
-
         public OpSpawn(string exe, IEnumerable<string> arguments = null)
         {
             Executable = exe;
