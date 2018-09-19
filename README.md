@@ -2,6 +2,10 @@
 
 **telegen** is a project written for the third phase of the **Red Canary** interview process. It's purpose is to exercise the file system, the active processes, and the network interface and record those activities so that the recorded information may be compared with the information detected by the system monitors.
 
+## Technical Documentation
+
+[Read the technical documentation here.](telegen/docs/telegen.md)
+
 ## Overview
 
 The assignment called for the implementation not just of an application, but a *framework*. I interpreted this to mean that the objects created should be usable in several different ways. This project demonstrates how to exercise the framework (and thus the desired endpoints) using a small, hand-parsed scripting language, and also how to use the framework from akka.net actors.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -16,9 +17,12 @@ namespace telegen
     {
         static void Main(string[] args)
         {
+            #region Header
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             Console.WriteLine($"telegen v{version}\n");
+            #endregion
 
+            #region Initialization
             var cmd = CommandParser.GetParsedCommand(); // Reads the command string
             if (HelpRequested(cmd)) return;
 
@@ -49,7 +53,7 @@ namespace telegen
             var useCustomLayout = cmd.ContainsSwitch("format");
             ReportLayout customLayout = null;
             IReportAgent rpt;
-
+            dynamic header = null;
             if (useCustomLayout) {
                 var customLayoutFile = cmd.Switches.format;
                 if (File.Exists(customLayoutFile)) {
@@ -61,11 +65,17 @@ namespace telegen
                 rpt = new CustomReportAgent(outFile, customLayout);
             } else {
                 rpt = new JSONReportAgent(outFile);
+                header = new ExpandoObject();
+                header.rundate = DateTime.UtcNow;
+                header.version = version;
             }
+            #endregion
+
+            #region Execute Report
 
             if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
             
-            rpt.EmitHeader();
+            rpt.EmitHeader(header);
 
             var engine = new ScriptEngine();
             foreach (var logEntry in engine.Execute(scriptFile)) {
@@ -76,14 +86,14 @@ namespace telegen
 
             rpt.EmitFooter();
 
-            Console.WriteLine("\n\nScript complete.\n");
+            #endregion
             
             #region Make VS-Windows behave like VS-Mac.
 #if DEBUG
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            if (Environment.OSVersion.Platform.ToString().Contains("Win"))
             {
-                Console.WriteLine("Press ENTER to continue...");
-                Console.ReadLine();
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
             }
 #endif
             #endregion
@@ -120,14 +130,15 @@ namespace telegen
             Console.WriteLine("      --clear             : Clear the log before running.\n\n");
             Console.WriteLine("      --format=<filename> : Use a custom format for the output.\n\n");
 
-            Console.WriteLine("   Script Commands:\n");
-            Console.WriteLine("      #This is a comment");
+            Console.WriteLine("   Script Command Examples:\n");
+            Console.WriteLine("      # This is a comment");
             Console.WriteLine("      FILE CREATE <filename>");
             Console.WriteLine("      FILE APPEND <filename>  \"<string to append>\"");
-            Console.WriteLine("      FILE APPEND <filename>  '<string to append>'");
+            Console.WriteLine("      FILE APPENDLINE <filename>  '<string to append>'");
             Console.WriteLine("      FILE DELETE <filename>");
             Console.WriteLine("      EXEC <application> <application parameters>");
             Console.WriteLine("      NET GET <url>\n\n");
+            Console.WriteLine("      WAIT <milliseconds>\n\n");
 
             Console.WriteLine("   Filenames and string data may be enclosed in single or double-quotes. If single-quotes");
             Console.WriteLine("   are used, then they can include double-quotes, and vise-versa. To comment a line, add");

@@ -6,6 +6,26 @@ using System.Linq;
 
 namespace telegen.Util
 {
+    /// <summary>
+    /// A parser class that I wrote a few years ago to parse
+    /// application command lines in a consistent manner. I made only
+    /// minimal tweaks to this class to get it ready for use here.
+    /// <para>While designed for command line parsing, I was also able to
+    /// coerce the class into doing double-duty as the line-level parser
+    /// for the script engine.</para>
+    /// </summary>
+    /// <remarks>
+    /// <para>The parser follows these conventions:
+    /// <list type="bullet">
+    /// <item>Quoted strings (single or double) are handled as one token. The quotes are removed from the string.</item>
+    /// <item>The backslash ("\") character is the escape character.</item>
+    /// <item>Windows-formatted paths must use double-backslashes. Mac/Unix paths are acceptable as they are.</item>
+    /// <item>The switch prefix is two dashes ("--").</item>
+    /// <item>Switchs may have an optional value assigned like so: <c>--switch=value</c></item>
+    /// <item>If a switch is assigned no value (<c>--switch</c>), then the assigned value is <c>true</c>.</item>
+    /// </list>
+    /// </para>
+    /// </remarks> 
     public class CommandParser
     {
 

@@ -8,6 +8,10 @@
     <SynchReleaseVersion>true</SynchReleaseVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>docs\telegen.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Scripts\Mac\Script1.tg" />
     <None Remove="Scripts\Windows\Script1.tg" />
