@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -52,7 +53,7 @@ namespace telegen
             var useCustomLayout = cmd.ContainsSwitch("format");
             ReportLayout customLayout = null;
             IReportAgent rpt;
-
+            dynamic header = null;
             if (useCustomLayout) {
                 var customLayoutFile = cmd.Switches.format;
                 if (File.Exists(customLayoutFile)) {
@@ -64,6 +65,9 @@ namespace telegen
                 rpt = new CustomReportAgent(outFile, customLayout);
             } else {
                 rpt = new JSONReportAgent(outFile);
+                header = new ExpandoObject();
+                header.rundate = DateTime.UtcNow;
+                header.version = version;
             }
             #endregion
 
@@ -71,7 +75,7 @@ namespace telegen
 
             if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
             
-            rpt.EmitHeader();
+            rpt.EmitHeader(header);
 
             var engine = new ScriptEngine();
             foreach (var logEntry in engine.Execute(scriptFile)) {

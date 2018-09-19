@@ -23,6 +23,8 @@ namespace telegen.Agents
             var text = "[\n";
             if (header != null)
                 text += JsonConvert.SerializeObject(header);
+            else
+                text += "{}";
             File.WriteAllText(Filename, text);
         }
 

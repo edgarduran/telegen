@@ -39,8 +39,8 @@ namespace telegen.Agents
                     sender.Connect(remoteEP);
                     clientPort = ((IPEndPoint)sender.LocalEndPoint).Port;
 
-                    Console.WriteLine("Socket connected to {0}",
-                        sender.RemoteEndPoint.ToString());
+                    //Console.WriteLine("Socket connected to {0}",
+                    //    sender.RemoteEndPoint.ToString());
 
                     // Encode the data string into a byte array.  
                     byte[] msg = Encoding.ASCII.GetBytes(req.ToString());
