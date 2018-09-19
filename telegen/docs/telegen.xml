@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>telegen</name>
+    </assembly>
+    <members>
+        <member name="T:telegen.Agents.Interfaces.IAgent">
+            <summary>
+            Generic agent interface used by the scripting engine.
+            </summary>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IAgent.Execute(telegen.Operations.Operation)">
+            <summary>
+            Executes the specified operation and returns the result.
+            </summary>
+            <param name="oper">The operation... a description of the action that needs to happen.</param>
+            <returns>The results of the operation, or null if no action was taken.</returns>
+        </member>
+        <member name="T:telegen.Agents.Interfaces.IFileAgent">
+            <summary>
+            Performs file-related operations.
+            </summary>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IFileAgent.CreateFile(telegen.Operations.OpCreateFile)">
+            <summary>
+            Creates a file.
+            </summary>
+            <param name="msg">The Operation object describing the file to create.</param>
+            <returns>The results of the operation, or null if no action was taken.</returns>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IFileAgent.DeleteFile(telegen.Operations.OpDeleteFile)">
+            <summary>
+            Deletes a file.
+            </summary>
+            <param name="msg">The Operation object describing the file to delete.</param>
+            <returns>The results of the operation, or null if no action was taken.</returns>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IFileAgent.UpdateFile(telegen.Operations.OpUpdateFile)">
+            <summary>
+            Updates a file.
+            </summary>
+            <param name="msg">The Operation object describing the file to update.
+            Currently, only appends are supported. Could be modified to support more
+            elaborate operations.
+            </param>
+            <returns>The results of the operation, or null if no action was taken.</returns>
+        </member>
+        <member name="T:telegen.Agents.Interfaces.INetworkAgent">
+            <summary>
+            Performs network-related operations.
+            </summary>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.INetworkAgent.Execute(telegen.Operations.WebReq)">
+            <summary>
+            Executes the specified request.
+            </summary>
+            <param name="req">The web request.</param>
+            <returns>The results of the operation.</returns>
+        </member>
+        <member name="T:telegen.Agents.Interfaces.IProcessAgent">
+            <summary>
+            Starts applications
+            </summary>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IProcessAgent.Spawn(telegen.Operations.OpSpawn)">
+            <summary>
+            Spawns the application specified in the operation.
+            </summary>
+            <param name="msg">The operation describing the application to be started.</param>
+            <returns>The results of the operation, including the process name and id number, or null if no action was taken.</returns>
+        </member>
+        <member name="T:telegen.Agents.Interfaces.IReportAgent">
+            <summary>
+            Receives and formats <see cref="T:telegen.Results.Result" /> data.
+            </summary>
+            <seealso cref="T:System.IDisposable" />
+        </member>
+        <member name="P:telegen.Agents.Interfaces.IReportAgent.HeadersAreRequired">
+            <summary>
+            Gets a value indicating whether the client must call the <see cref="M:telegen.Agents.Interfaces.IReportAgent.EmitHeader(System.Object)"/>
+            function before sending data to this Report Agent.
+            <para>Some output formats, including some Xml and Json formats, require special formatting
+            before and after the body of the report. This property indicates whether this agent's output
+            requires such a header.</para>
+            <para>Alternately, the report agent may need to do some one-time initialization, and may
+            do so in this method.</para>
+            </summary>
+            <value>
+              <c>true</c> if the call is required; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:telegen.Agents.Interfaces.IReportAgent.FootersAreRequired">
+            <summary>
+            Gets a value indicating whether the client must call the <see cref="M:telegen.Agents.Interfaces.IReportAgent.EmitFooter"/> method after sending
+            all of the data to the report agent. This may be required to include a closing footer, or to do some
+            report engine cleanup.
+            </summary>
+            <value>
+              <c>true</c> if the call is required; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IReportAgent.EmitHeader(System.Object)">
+            <summary>
+            Performs any required engine initialization and emits the report header (if any).
+            </summary>
+            <param name="header">The header data.</param>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IReportAgent.EmitDetailLine(telegen.Results.Result)">
+            <summary>
+            Emits a detail line.
+            </summary>
+            <param name="evt">The data for the report line.</param>
+        </member>
+        <member name="M:telegen.Agents.Interfaces.IReportAgent.EmitFooter">
+            <summary>
+            Emits the footer and cleans up the report engine.
+            </summary>
+        </member>
+        <member name="M:telegen.Agents.NLogReportAgent.BuildLayout(System.String)">
+            <summary>
+            This method is responsible for parsing the layout string, and translating it
+            into the format required by the reporting engine... in this case, NLog. The
+            method is declared <c>virtual</c> so that other implementations can use the
+            existing NLog tooling, but with a different layout string dialect.
+            </summary>
+            <param name="def">The generic layout definition.</param>
+            <returns>An NLog <see cref="T:NLog.Layouts.Layout"/> object.</returns>
+            <exception cref="T:System.Exception">
+            </exception>
+        </member>
+        <member name="T:telegen.Agents.NullAgent">
+            <summary>
+            An agent that receives any operation, performs no task, and returns a <see cref="T:telegen.Results.NullResult"/>. This
+            is sometimes created by the engine when the appropriate agent cannot be found for an operation. If so,
+            the result will attempt to indicate why this happened.
+            </summary>
+            <seealso cref="T:telegen.Agents.Interfaces.IAgent" />
+        </member>
+        <member name="T:telegen.IScriptEngine">
+            <summary>
+            Describes the interface for the script engine.
+            </summary>
+        </member>
+        <member name="M:telegen.IScriptEngine.Execute(System.String)">
+            <summary>
+            Executes the script contained in the specified filename.
+            </summary>
+            <param name="filename">The script filename.</param>
+            <remarks>
+            Most implementations of this command will read the contents of the file into
+            a string array, and then forward them to the <see cref="M:telegen.IScriptEngine.Execute(System.Collections.Generic.IEnumerable{System.String})"/> method.
+            </remarks>
+            <returns>A list of <see cref="N:telegen.Results"/> returned by the script.</returns>
+        </member>
+        <member name="M:telegen.IScriptEngine.Execute(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Executes the specified script.
+            </summary>
+            <param name="script">The script.</param>
+            <returns>A list of <see cref="N:telegen.Results"/> returned by the script.</returns>
+        </member>
+        <member name="T:telegen.IScriptTranslator">
+            <summary>
+            Script translators are responsible for parsing the script and returning
+            the appropriate <see cref="T:telegen.Operations.Operation"/> objects. This architecture permits
+            us to develop multiple script languages, all of which speak the common language
+            of "<c>IEnumerable&lt;Operation&gt;</c>". This is similar to the way that multiple
+            languages compile to Java bytecode or to .Net MSIL.
+            </summary>
+        </member>
+        <member name="M:telegen.IScriptTranslator.Translate(System.String)">
+            <summary>
+            Translates the script contained in the specified filename.
+            </summary>
+            <param name="filename">The script filename.</param>
+            <returns>A list of <see cref="T:telegen.Operations.Operation"/> objects represented by the script.</returns>
+            <remarks>
+            Most implementations of this command will read the contents of the file into
+            a string array, and then forward them to the <see cref="M:telegen.IScriptTranslator.Translate(System.Collections.Generic.IEnumerable{System.String})"/> method.
+            </remarks>
+        </member>
+        <member name="M:telegen.IScriptTranslator.Translate(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Translates the specified script.
+            </summary>
+            <param name="script">The script.</param>
+            <returns>A list of <see cref="T:telegen.Operations.Operation"/> objects represented by the script.</returns>
+        </member>
+        <member name="T:telegen.Operations.FileOperation">
+            <summary>
+            Represents a generic operation targeting the file system.
+            </summary>
+            <seealso cref="T:telegen.Operations.Operation" />
+        </member>
+        <member name="T:telegen.Operations.OpCreateFile">
+            <summary>
+            Requests the framework to create a file. If the file exists, the operation is ignored.
+            </summary>
+            <seealso cref="T:telegen.Operations.FileOperation" />
+        </member>
+        <member name="T:telegen.Operations.OpDeleteFile">
+            <summary>
+            Requests the framework to delete a file. If the file does not exist, the operation is ignored.
+            </summary>
+            <seealso cref="T:telegen.Operations.FileOperation" />
+        </member>
+        <member name="T:telegen.Operations.Operation">
+            <summary>
+            Operations describe the events requested of the telegen framework. They
+            contain all of the data required to perform the corresponding task. The target
+            <c>IAgent</c> extracts this data and performs the action, if possible. It returns
+            a <c>Result</c> object describing the completed task. 
+            </summary>
+            <seealso cref="T:telegen.Agents.Interfaces.IAgent"/>
+        </member>
+        <member name="M:telegen.Operations.Operation.ToString">
+            <summary>
+            Returns a JSON-formatted <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:telegen.Operations.OpNetGet">
+            <summary>
+            Retrieves data from a server using http get.
+            </summary>
+            <seealso cref="T:telegen.Operations.NetworkMessage" />
+        </member>
+        <member name="T:telegen.Operations.OpNop">
+            <summary>
+            No operation; do nothing.
+            </summary>
+            <seealso cref="T:telegen.Operations.Operation" />
+        </member>
+        <member name="T:telegen.Operations.OpSpawn">
+            <summary>
+            Launch an application, optionally passing arguments via the command line.
+            </summary>
+            <seealso cref="T:telegen.Operations.Operation" />
+        </member>
+        <member name="T:telegen.Operations.OpUpdateFile">
+            <summary>
+            Requests that the framework modify a file. Currently, only
+            append operations are supported.
+            </summary>
+            <seealso cref="T:telegen.Operations.FileOperation" />
+        </member>
+        <member name="T:telegen.Operations.OpWait">
+            <summary>
+            Pause the engine for the given number of milliseconds.
+            </summary>
+            <seealso cref="T:telegen.Operations.Operation" />
+        </member>
+        <member name="T:telegen.Util.CommandParser">
+            <summary>
+            A parser class that I wrote a few years ago to parse
+            application command lines in a consistent manner. I made only
+            minimal tweaks to this class to get it ready for use here.
+            <para>While designed for command line parsing, I was also able to
+            coerce the class into doing double-duty as the line-level parser
+            for the script engine.</para>
+            </summary>
+            <remarks>
+            <para>The parser follows these conventions:
+            <list type="bullet">
+            <item>Quoted strings (single or double) are handled as one token. The quotes are removed from the string.</item>
+            <item>The backslash ("\") character is the escape character.</item>
+            <item>Windows-formatted paths must use double-backslashes. Mac/Unix paths are acceptable as they are.</item>
+            <item>The switch prefix is two dashes ("--").</item>
+            <item>Switchs may have an optional value assigned like so: <c>--switch=value</c></item>
+            <item>If a switch is assigned no value (<c>--switch</c>), then the assigned value is <c>true</c>.</item>
+            </list>
+            </para>
+            </remarks> 
+        </member>
+        <member name="P:telegen.Util.ReportLayout.Header">
+            <summary>
+            Gets or sets the header data, in the format <code>Header.&lt;propertyName&gt; = "Column Name";</code>
+            </summary>
+            <value>
+            The header.
+            </value>
+        </member>
+        <member name="P:telegen.Util.ReportLayout.HeaderFields">
+            <summary>
+            Gets the header fields. Provides enumerable access to all of the column names in the <see cref="P:telegen.Util.ReportLayout.Header"/> dynamic object.
+            </summary>
+            <value>
+            The header fields.
+            </value>
+        </member>
+        <member name="P:telegen.Util.ReportLayout.Layout">
+            <summary>
+            Gets or sets the layout. Report properties are placed in the layout
+            by surrounding the property name with braces:
+            <para><c>{propertyName1}, {propertyName2}...</c></para>
+            </summary>
+            <value>
+            The layout string.
+            </value>
+        </member>
+        <member name="P:telegen.Util.ReportLayout.KeepCrLfs">
+            <summary>
+            Gets a value indicating whether line breaks in the layout are significant. If this value
+            is false, then line breaks are removed from the layout string before it is applied.
+            </summary>
+            <value>
+              <c>true</c> if line breaks are significant; otherwise, <c>false</c>.
+            </value>
+        </member>
+    </members>
+</doc>
