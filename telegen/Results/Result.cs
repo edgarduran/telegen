@@ -5,8 +5,9 @@ using Newtonsoft.Json;
 
 namespace telegen.Results
 {
-    //todo: Add appropriate JsonProperty attributes to these classes
     public abstract class Result {
+
+        #region Static values.  Gather this information only once.
         private static string _thisProcessName = null;
         private static int _thisProcessId;
         private static string _thisProcessCommandLine;
@@ -15,7 +16,7 @@ namespace telegen.Results
         private static DateTime _thisProcessStartTime;
         private static string _machine;
         private static readonly object ProcessLock = new object();
-
+        #endregion
 
         private static void GetDefaults() {
             if (_thisProcessName == null)
@@ -60,26 +61,13 @@ namespace telegen.Results
 
         public string ResultType => GetType().Name;
         public string ProcessName { get; }
-        public string TimeString => $"{UTCStart:u}";
+        public string TimeStamp => $"{UTCStart:u}";
         public int ProcessId { get; }
         public DateTime UTCStart { get; protected set; }
         public string UserName { get; protected set; }
         public string CommandLine { get; protected set; }
         public string StartingFolder { get; protected set; }
         public string Machine { get; protected set; }
-
-        public virtual void CopyToDictionary(IDictionary<object, object> d)
-        {
-            d["Type"] = GetType().Name.Replace("Result", string.Empty);
-            d[nameof(ResultType)] = ResultType;
-            d[nameof(ProcessName)] = ProcessName;
-            d[nameof(UTCStart)] = TimeString;
-            d[nameof(ProcessId)] = ProcessId.ToString();
-            d[nameof(UserName)] = UserName;
-            d[nameof(CommandLine)] = CommandLine;
-            d[nameof(StartingFolder)] = StartingFolder;
-            d[nameof(Machine)] = Machine;
-        }
 
         public override string ToString() => JsonConvert.SerializeObject(this);
     }

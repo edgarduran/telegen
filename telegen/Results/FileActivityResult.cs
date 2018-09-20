@@ -25,14 +25,6 @@ namespace telegen.Results
         public string FileName { get; }
         public string FileEventType { get; }
  
-        public override void CopyToDictionary(IDictionary<object, object> d)
-        {
-            d[nameof(FileName)] = FileName;
-            d[nameof(FileEventType)] = FileEventType;
-            d[nameof(UserName)] = UserName;
-            d[nameof(CommandLine)] = CommandLine;
-            base.CopyToDictionary(d);
-        }
     }
 
 }

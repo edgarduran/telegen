@@ -6,7 +6,8 @@ namespace telegen.Agents {
     public class SystemAgent : Agent {
 
         public override Result Execute(Operation oper) {
-            Guard(oper, "Wait");
+            Guard(oper, "Wait", "Comment");
+            if (oper.Action == "Comment") return null;
             return Wait(oper);
         }
 

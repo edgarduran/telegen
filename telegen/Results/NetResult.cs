@@ -39,17 +39,6 @@ namespace telegen.Results
         public long BytesSent { get; private set; }
         public string Protocol { get; private set; }
 
-        public override void CopyToDictionary(IDictionary<object, object> d)
-        {
-            base.CopyToDictionary(d);
-            d[nameof(SourceAddress)] = SourceAddress;
-            d[nameof(SourcePort)] = SourcePort;
-            d[nameof(DestAddress)] = DestAddress;
-            d[nameof(DestPort)] = DestPort;
-            d[nameof(BytesSent)] = BytesSent;
-            d[nameof(Protocol)] = Protocol;
-        }
-
     }
 
 }

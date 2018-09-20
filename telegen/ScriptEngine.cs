@@ -33,11 +33,13 @@ namespace telegen
             var opCount = 0;
             foreach (var op in script) {
                 opCount++;
-                Console.WriteLine($"{op.Domain}.{op.Action}");
+                //Console.WriteLine($"{op.Domain}.{op.Action}");
                 if (Agents.ContainsKey(op.Domain)) {
                     var agentFactory = Agents[op.Domain];
                     var agent = agentFactory();
-                    yield return agent.Execute(op);
+                    var result = agent.Execute(op);
+                    if (result != null) 
+                        yield return result;
                 }
                 else
                 {

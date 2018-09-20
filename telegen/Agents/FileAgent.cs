@@ -37,7 +37,7 @@ namespace telegen.Agents
                     }
                 default:
                     {
-                        result = new NullResult($"{GetType().Name} was invoked with an unsupported action ({oper.Action}).");
+                        result = null;
                         break;
                     }
             }
@@ -68,7 +68,6 @@ namespace telegen.Agents
 
         protected FileActivityResult DeleteFile(Operation msg)
         {
-            //TODO: What do I do if the requested event is not performed?
             var fn = NormalizeFileName(msg.Require<string>("filename"));
             if (File.Exists(fn))
             {

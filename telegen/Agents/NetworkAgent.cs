@@ -31,65 +31,41 @@ namespace telegen.Agents
             int clientPort = 0;
 
             // Connect to a remote device.  
-            try
-            {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                //IPHostEntry ipClientInfo = Dns.GetHostEntry(Dns.GetHostName());
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(req.Uri.Host);
-                IPAddress ipAddress = ipHostInfo.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, req.Port);
 
-                // Create a TCP/IP  socket.  
-                Socket sender = new Socket(AddressFamily.InterNetwork,
-                    SocketType.Stream, ProtocolType.Tcp);
+            // Establish the remote endpoint for the socket.  
+            // This example uses port 11000 on the local computer.  
+            //IPHostEntry ipClientInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(req.Uri.Host);
+            IPAddress ipAddress = ipHostInfo.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, req.Port);
 
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try
-                {
-                    sender.Connect(remoteEP);
-                    clientPort = ((IPEndPoint)sender.LocalEndPoint).Port;
+            // Create a TCP/IP  socket.  
+            Socket sender = new Socket(AddressFamily.InterNetwork,
+                SocketType.Stream, ProtocolType.Tcp);
 
-                    //Console.WriteLine("Socket connected to {0}",
-                    //    sender.RemoteEndPoint.ToString());
+            // Connect the socket to the remote endpoint. Catch any errors.  
 
-                    // Encode the data string into a byte array.  
-                    byte[] msg = Encoding.ASCII.GetBytes(req.ToString());
+            sender.Connect(remoteEP);
+            clientPort = ((IPEndPoint)sender.LocalEndPoint).Port;
 
-                    // Send the data through the socket.  
-                    utcTimeStamp = DateTime.UtcNow;
-                    int bytesSent = sender.Send(msg);
+            //Console.WriteLine("Socket connected to {0}",
+            //    sender.RemoteEndPoint.ToString());
 
-                    // Receive the response from the remote device.  
-                    int bytesRec = sender.Receive(bytes);
-                    response = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            // Encode the data string into a byte array.  
+            byte[] msg = Encoding.ASCII.GetBytes(req.ToString());
 
-                    // Release the socket.  
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
+            // Send the data through the socket.  
+            utcTimeStamp = DateTime.UtcNow;
+            int bytesSent = sender.Send(msg);
 
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                    throw;
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                    throw;
-                }
+            // Receive the response from the remote device.  
+            int bytesRec = sender.Receive(bytes);
+            response = Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            // Release the socket.  
+            sender.Shutdown(SocketShutdown.Both);
+            sender.Close();
+
             return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
         }
 
