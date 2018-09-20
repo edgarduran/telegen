@@ -17,7 +17,7 @@ namespace telegen.Agents
             return Get(oper);
         }
 
-        protected NetResult Get(Operation oper )
+        protected Result Get(Operation oper )
         {
             var url = oper.Require<string>("url");
             var port = (int) oper.Optional<long>("port", 80);
@@ -65,8 +65,8 @@ namespace telegen.Agents
             // Release the socket.  
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
-
-            return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
+            throw new System.Exception("Fix this.");
+            //return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
         }
 
     }

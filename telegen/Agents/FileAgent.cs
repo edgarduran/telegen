@@ -44,15 +44,16 @@ namespace telegen.Agents
             return result;
         }
 
-        protected FileActivityResult CreateFile(Operation msg)
+        protected Result CreateFile(Operation msg)
         {
             var fn = NormalizeFileName(msg.Require<string>("filename")); 
             File.WriteAllText(fn, string.Empty);
             var fi = new FileInfo(fn);
-            return new FileActivityResult(fi.CreationTimeUtc, fn, FileEventType.Create, Environment.UserName);
+            throw new System.Exception("Fix this.");
+            //return new FileActivityResult(fi.CreationTimeUtc, fn, FileEventType.Create, Environment.UserName);
         }
 
-        protected FileActivityResult AppendToFile(Operation msg, bool postAppendNewLine)
+        protected Result AppendToFile(Operation msg, bool postAppendNewLine)
         {
             var (fn, contents) = msg.Require<string, string>("filename", "contents");
             fn = NormalizeFileName(fn);
@@ -60,19 +61,21 @@ namespace telegen.Agents
             if (File.Exists(fn))
             {
                 File.AppendAllText(fn, contents);
-                var fi = new FileInfo(fn);                
-                return new FileActivityResult(fi.LastWriteTimeUtc, fn, FileEventType.Update, Environment.UserName);
+                var fi = new FileInfo(fn);
+                throw new System.Exception("Fix this.");
+                //            return new FileActivityResult(fi.LastWriteTimeUtc, fn, FileEventType.Update, Environment.UserName);
             }
             return null;
         }
 
-        protected FileActivityResult DeleteFile(Operation msg)
+        protected Result DeleteFile(Operation msg)
         {
             var fn = NormalizeFileName(msg.Require<string>("filename"));
             if (File.Exists(fn))
             {
                 File.Delete(fn);
-                return new FileActivityResult(DateTime.UtcNow, fn, FileEventType.Delete, Environment.UserName);
+                throw new System.Exception("Fix this.");
+                //return new FileActivityResult(DateTime.UtcNow, fn, FileEventType.Delete, Environment.UserName);
 
             }
             return null;

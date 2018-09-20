@@ -14,7 +14,8 @@ namespace telegen.Agents {
         protected Result Wait(Operation msg) {
             var ms =(int) msg.Require<long>("ms");
             System.Threading.Thread.Sleep(ms);
-            return new MessageResult($"Script was paused for {ms} milliseconds...");
+            throw new System.Exception("Fix this.");
+//            return new MessageResult($"Script was paused for {ms} milliseconds...");
         }
 
     }

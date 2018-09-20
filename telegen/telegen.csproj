@@ -20,6 +20,13 @@
     <None Remove="docs\telegen.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Results\FileActivityResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Results\FileEventType.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Results\MessageResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Results\NetResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Results\SpawnResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="telegen">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -39,5 +46,10 @@
     <Compile Remove="Util\ReportLayout.cs" />
     <Compile Remove="Util\CommandParser.cs" />
     <Compile Remove="Results\NullResult.cs" />
+    <Compile Remove="Results\FileActivityResult.cs" />
+    <Compile Remove="Results\FileEventType.cs" />
+    <Compile Remove="Results\MessageResult.cs" />
+    <Compile Remove="Results\NetResult.cs" />
+    <Compile Remove="Results\SpawnResult.cs" />
   </ItemGroup>
 </Project>

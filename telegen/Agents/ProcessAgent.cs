@@ -13,12 +13,13 @@ namespace telegen.Agents
             return Spawn(oper);
         }
 
-        protected SpawnResult Spawn(Operation msg)
+        protected Result Spawn(Operation msg)
         {
             Guard(msg, "Spawn");
             var (executable, arguments) = msg.Require<string, string>("executable", "arguments");
             var p = System.Diagnostics.Process.Start(executable, arguments);
-            return new SpawnResult(p, Environment.UserName, arguments);
+            throw new System.Exception("Fix this.");
+            //return new SpawnResult(p, Environment.UserName, arguments);
         }
 
     }
