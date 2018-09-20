@@ -2,7 +2,7 @@
 
 namespace telegen.Operations
 {
-    public abstract class NetworkMessage : Operation
+    public abstract class NetworkMessage : OldOperation
     {
         protected NetworkMessage(string uri) => Uri = new Uri(uri);
         public Uri Uri { get; }

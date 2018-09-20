@@ -5,8 +5,8 @@ namespace telegen.Operations
     /// <summary>
     /// Launch an application, optionally passing arguments via the command line.
     /// </summary>
-    /// <seealso cref="telegen.Operations.Operation" />
-    public class OpSpawn : Operation
+    /// <seealso cref="telegen.Operations.OldOperation" />
+    public class OpSpawn : OldOperation
     {
         public OpSpawn(string exe, IEnumerable<string> arguments = null)
         {

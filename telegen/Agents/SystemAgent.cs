@@ -1,0 +1,20 @@
+﻿using telegen.Agents.Interfaces;
+using telegen.Operations;
+using telegen.Results;
+
+namespace telegen.Agents {
+    public class SystemAgent : Agent {
+
+        public override Result Execute(Operation oper) {
+            Guard(oper, "Wait");
+            return Wait(oper);
+        }
+
+        protected Result Wait(Operation msg) {
+            var ms =(int) msg.Require<long>("ms");
+            System.Threading.Thread.Sleep(ms);
+            return new MessageResult($"Script was paused for {ms} milliseconds...");
+        }
+
+    }
+}

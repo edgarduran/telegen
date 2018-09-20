@@ -7,65 +7,84 @@ using telegen.Results;
 
 namespace telegen.Agents
 {
-    public class FileAgent : IFileAgent, IAgent
+    public class FileAgent : Agent //, IFileAgent
     {
-        public FileActivityResult CreateFile(OpCreateFile msg)
+        public override Result Execute(Operation oper)
         {
-            File.WriteAllText(msg.FullName, string.Empty);
-            var fi = new FileInfo(msg.FullName);
-            return new FileActivityResult(fi.CreationTimeUtc, msg.FullName, FileEventType.Create, Environment.UserName);
-        }
-
-        public FileActivityResult UpdateFile(OpUpdateFile msg)
-        {
-            if (File.Exists(msg.FullName))
-            {
-                File.AppendAllText(msg.FullName, msg.Contents);
-                var fi = new FileInfo(msg.FullName);                
-                return new FileActivityResult(fi.LastWriteTimeUtc, msg.FullName, FileEventType.Update, Environment.UserName);
-            }
-            return null;
-        }
-
-        public FileActivityResult DeleteFile(OpDeleteFile msg)
-        {
-            //TODO: What do I do if the requested event is not performed?
-            if (File.Exists(msg.FullName))
-            {
-                File.Delete(msg.FullName);
-                return new FileActivityResult(DateTime.UtcNow, msg.FullName, FileEventType.Delete, Environment.UserName);
-
-            }
-            return null;
-        }
-
-        public Result Execute(Operation oper)
-        {
+            Guard(oper, "Create", "Append", "AppendLine", "Delete");
             Result result = null;
-            switch (oper.GetType().Name)
+            switch (oper.Action.ToLowerInvariant())
             {
-                case nameof(OpCreateFile): 
+                case "create":
                     {
-                        result = CreateFile(oper as OpCreateFile);
+                        result = CreateFile(oper);
                         break;
                     }
-                case nameof(OpUpdateFile):
+                case "append":
                     {
-                        result = UpdateFile(oper as OpUpdateFile);
+                        result = AppendToFile(oper, false);
                         break;
                     }
-                case nameof(OpDeleteFile):
+                case "appendline":
                     {
-                        result = DeleteFile(oper as OpDeleteFile);
+                        result = AppendToFile(oper, true);
+                        break;
+                    }
+                case "delete":
+                    {
+                        result = DeleteFile(oper);
                         break;
                     }
                 default:
                     {
-                        result = new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
+                        result = new NullResult($"{GetType().Name} was invoked with an unsupported action ({oper.Action}).");
                         break;
                     }
             }
             return result;
         }
+
+        protected FileActivityResult CreateFile(Operation msg)
+        {
+            var fn = NormalizeFileName(msg.Require<string>("filename")); 
+            File.WriteAllText(fn, string.Empty);
+            var fi = new FileInfo(fn);
+            return new FileActivityResult(fi.CreationTimeUtc, fn, FileEventType.Create, Environment.UserName);
+        }
+
+        protected FileActivityResult AppendToFile(Operation msg, bool postAppendNewLine)
+        {
+            var (fn, contents) = msg.Require<string, string>("filename", "contents");
+            fn = NormalizeFileName(fn);
+            if (postAppendNewLine) contents += Environment.NewLine;
+            if (File.Exists(fn))
+            {
+                File.AppendAllText(fn, contents);
+                var fi = new FileInfo(fn);                
+                return new FileActivityResult(fi.LastWriteTimeUtc, fn, FileEventType.Update, Environment.UserName);
+            }
+            return null;
+        }
+
+        protected FileActivityResult DeleteFile(Operation msg)
+        {
+            //TODO: What do I do if the requested event is not performed?
+            var fn = NormalizeFileName(msg.Require<string>("filename"));
+            if (File.Exists(fn))
+            {
+                File.Delete(fn);
+                return new FileActivityResult(DateTime.UtcNow, fn, FileEventType.Delete, Environment.UserName);
+
+            }
+            return null;
+        }
+
+        protected static string NormalizeFileName(string filename)
+        {
+            var results = filename
+                .Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+            return results;
+        }
+
     }
 }

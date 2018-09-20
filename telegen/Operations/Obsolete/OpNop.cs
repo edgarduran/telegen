@@ -2,8 +2,8 @@
     /// <summary>
     /// No operation; do nothing.
     /// </summary>
-    /// <seealso cref="telegen.Operations.Operation" />
-    public class OpNop : Operation {
+    /// <seealso cref="telegen.Operations.OldOperation" />
+    public class OpNop : OldOperation {
         public string Command { get; }
 
         public OpNop(string command) {

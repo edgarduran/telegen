@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,11 +9,21 @@ using telegen.Results;
 
 namespace telegen.Agents
 {
-    public class NetworkAgent : INetworkAgent, IAgent
+    public class NetworkAgent : Agent
     {
-
-        public NetResult Execute(WebReq req)
+        public override Result Execute(Operation oper)
         {
+            Guard(oper, "Get");
+            return Get(oper);
+        }
+
+        protected NetResult Get(Operation oper )
+        {
+            var url = oper.Require<string>("url");
+            var port = (int) oper.Optional<long>("port", 80);
+
+            var req = new WebReq(url, port);
+
             // Data buffer for incoming data.  
             byte[] bytes = new byte[1024];
             string response = null;
@@ -26,7 +37,7 @@ namespace telegen.Agents
                 // This example uses port 11000 on the local computer.  
                 //IPHostEntry ipClientInfo = Dns.GetHostEntry(Dns.GetHostName());
                 IPHostEntry ipHostInfo = Dns.GetHostEntry(req.Uri.Host);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPAddress ipAddress = ipHostInfo.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, req.Port);
 
                 // Create a TCP/IP  socket.  
@@ -61,14 +72,17 @@ namespace telegen.Agents
                 catch (ArgumentNullException ane)
                 {
                     Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+                    throw;
                 }
                 catch (SocketException se)
                 {
                     Console.WriteLine("SocketException : {0}", se.ToString());
+                    throw;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                    throw;
                 }
 
             }
@@ -79,15 +93,5 @@ namespace telegen.Agents
             return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
         }
 
-        public Result Execute(Operation oper)
-        {
-            if (oper is OpNetGet op)
-            {
-                //var op = oper as OpNetGet;
-                var req = new WebReq(op.Address);
-                return Execute(req);
-            }
-            return new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
-        }
     }
 }

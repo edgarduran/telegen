@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using telegen.Operations;
 using telegen.Results;
 
 namespace telegen
@@ -8,6 +9,8 @@ namespace telegen
     /// </summary>
     public interface IScriptEngine
     {
+        IEnumerable<Result> ParseAndExecute(string jsonScript);
+
         /// <summary>
         /// Executes the script contained in the specified filename.
         /// </summary>
@@ -25,6 +28,6 @@ namespace telegen
         /// </summary>
         /// <param name="script">The script.</param>
         /// <returns>A list of <see cref="telegen.Results"/> returned by the script.</returns>
-        IEnumerable<Result> Execute(IEnumerable<string> script);
+        IEnumerable<Result> Execute(IEnumerable<Operation> script);
     }
 }

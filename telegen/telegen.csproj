@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <Version>1.0.0</Version>
-    <ReleaseVersion>1.0.0</ReleaseVersion>
+    <ReleaseVersion>0.1.1</ReleaseVersion>
     <SynchReleaseVersion>true</SynchReleaseVersion>
   </PropertyGroup>
 
@@ -13,38 +13,61 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\Mac\Script1.tg" />
-    <None Remove="Scripts\Windows\Script1.tg" />
-    <None Remove="Scripts\_Layouts\CSV.layout" />
-    <None Remove="Scripts\_Layouts\BSV.layout" />
-    <None Remove="Scripts\_Layouts\TSV.layout" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Scripts\Mac\Script1.tg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\Windows\Script1.tg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\_Layouts\BSV.layout">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\_Layouts\CSV.layout">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\_Layouts\TSV.layout">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NLog" Version="4.5.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Operations\Obsolete\FileOperation.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\NetworkMessage.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpCreateFile.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpDeleteFile.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpNetGet.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpNop.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpSpawn.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpUpdateFile.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Operations\Obsolete\OpWait.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Interfaces\Obsolete\IFileAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Interfaces\Obsolete\INetworkAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Interfaces\Obsolete\IProcessAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Interfaces\Obsolete\IReportAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\CustomReportAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\JSONReportAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\MemoryReportAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\NLogReportAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\ExceptionAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+    <None Include="Agents\Obsolete\NullAgent.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
   </ItemGroup>
   <ItemGroup>
     <None Update="telegen">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Operations\Obsolete\" />
+    <Folder Include="Agents\Interfaces\Obsolete\" />
+    <Folder Include="Agents\Obsolete\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Operations\Obsolete\FileOperation.cs" />
+    <Compile Remove="Operations\Obsolete\NetworkMessage.cs" />
+    <Compile Remove="Operations\Obsolete\OpCreateFile.cs" />
+    <Compile Remove="Operations\Obsolete\OpDeleteFile.cs" />
+    <Compile Remove="Operations\Obsolete\OpNetGet.cs" />
+    <Compile Remove="Operations\Obsolete\OpNop.cs" />
+    <Compile Remove="Operations\Obsolete\OpSpawn.cs" />
+    <Compile Remove="Operations\Obsolete\OpUpdateFile.cs" />
+    <Compile Remove="Operations\Obsolete\OpWait.cs" />
+    <Compile Remove="Agents\Interfaces\Obsolete\IFileAgent.cs" />
+    <Compile Remove="Agents\Interfaces\Obsolete\INetworkAgent.cs" />
+    <Compile Remove="Agents\Interfaces\Obsolete\IProcessAgent.cs" />
+    <Compile Remove="Agents\Interfaces\Obsolete\IReportAgent.cs" />
+    <Compile Remove="Agents\Obsolete\CustomReportAgent.cs" />
+    <Compile Remove="Agents\Obsolete\JSONReportAgent.cs" />
+    <Compile Remove="Agents\Obsolete\MemoryReportAgent.cs" />
+    <Compile Remove="Agents\Obsolete\NLogReportAgent.cs" />
+    <Compile Remove="Agents\ExceptionAgent.cs" />
+    <Compile Remove="Agents\Obsolete\ExceptionAgent.cs" />
+    <Compile Remove="Agents\NullAgent.cs" />
+    <Compile Remove="Agents\Obsolete\NullAgent.cs" />
+    <Compile Remove="ScriptTranslator.cs" />
   </ItemGroup>
 </Project>

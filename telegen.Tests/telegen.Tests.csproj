@@ -15,8 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\telegen.host\telegen.host.csproj" />
     <ProjectReference Include="..\telegen\telegen.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="TestActors.cs" />
+    <Compile Remove="TestReports.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestActors.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
+  </ItemGroup>
 </Project>

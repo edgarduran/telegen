@@ -4,8 +4,8 @@ namespace telegen.Operations
     /// <summary>
     /// Represents a generic operation targeting the file system.
     /// </summary>
-    /// <seealso cref="telegen.Operations.Operation" />
-    public abstract class FileOperation : Operation
+    /// <seealso cref="telegen.Operations.OldOperation" />
+    public abstract class FileOperation : OldOperation
     {
         protected FileOperation(string fullname)
         {

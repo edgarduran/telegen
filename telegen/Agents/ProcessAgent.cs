@@ -5,19 +5,21 @@ using telegen.Results;
 
 namespace telegen.Agents
 {
-    public class ProcessAgent : IProcessAgent, IAgent
+    public class ProcessAgent : Agent
     {
-        public SpawnResult Spawn(OpSpawn msg)
+        public override Result Execute(Operation oper)
         {
-            var p = System.Diagnostics.Process.Start(msg.Executable, msg.Arguments);
-            return new SpawnResult(p, Environment.UserName, msg.Arguments);
+            Guard(oper, "Spawn");
+            return Spawn(oper);
         }
 
-        public Result Execute(Operation oper)
+        protected SpawnResult Spawn(Operation msg)
         {
-            return oper is OpSpawn ?
-                Spawn(oper as OpSpawn) as Result :
-                new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
+            Guard(msg, "Spawn");
+            var (executable, arguments) = msg.Require<string, string>("executable", "arguments");
+            var p = System.Diagnostics.Process.Start(executable, arguments);
+            return new SpawnResult(p, Environment.UserName, arguments);
         }
+
     }
 }

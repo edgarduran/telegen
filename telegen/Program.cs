@@ -3,10 +3,6 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using NLog;
-using NLog.Config;
-using NLog.Layouts;
-using NLog.Targets;
 using telegen.Agents;
 using telegen.Agents.Interfaces;
 using telegen.Util;
@@ -34,7 +30,7 @@ namespace telegen
             switch (cmd.Parms.Count) {
                 case 1:
                     scriptFile = cmd.Parms[0];
-                    outFile = scriptFile + ".txt";
+                    outFile = Path.Combine(Path.GetDirectoryName(scriptFile), Path.GetFileNameWithoutExtension(scriptFile) + ".output.json");
                     break;
                 case 2:
                     scriptFile = cmd.Parms[0];
@@ -50,41 +46,21 @@ namespace telegen
 
             var echoOn = cmd.ContainsSwitch("echo");
 
-            var useCustomLayout = cmd.ContainsSwitch("format");
-            ReportLayout customLayout = null;
-            IReportAgent rpt;
-            dynamic header = null;
-            if (useCustomLayout) {
-                var customLayoutFile = cmd.Switches.format;
-                if (File.Exists(customLayoutFile)) {
-                    //customLayout = File.ReadAllText(customLayoutFile);
-                    customLayout = ReportLayout.Open(customLayoutFile);
-                } else {
-                    throw new Exception($"ERR: Could not find requested layout file ({customLayoutFile})");
-                }
-                rpt = new CustomReportAgent(outFile, customLayout);
-            } else {
-                rpt = new JSONReportAgent(outFile);
-                header = new ExpandoObject();
-                header.rundate = DateTime.UtcNow;
-                header.version = version;
-            }
             #endregion
 
             #region Execute Report
 
             if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
-            
-            rpt.EmitHeader(header);
 
             var engine = new ScriptEngine();
-            foreach (var logEntry in engine.Execute(scriptFile)) {
-                if (logEntry == null) continue;
-                rpt.EmitDetailLine(logEntry);
-                if (echoOn) Console.WriteLine(logEntry.ToString());
-            }
+            //foreach (var logEntry in engine.Execute(scriptFile)) {
+            //    if (logEntry == null) continue;
+            //    rpt.EmitDetailLine(logEntry);
+            //    if (echoOn) Console.WriteLine(logEntry.ToString());
+            //}
 
-            rpt.EmitFooter();
+            var rpt = engine.Execute(scriptFile);
+            File.WriteAllText(outFile, JsonConvert.SerializeObject(rpt));
 
             #endregion
             

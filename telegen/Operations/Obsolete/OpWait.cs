@@ -7,8 +7,8 @@ namespace telegen.Operations
     /// <summary>
     /// Pause the engine for the given number of milliseconds.
     /// </summary>
-    /// <seealso cref="telegen.Operations.Operation" />
-    public class OpWait : Operation
+    /// <seealso cref="telegen.Operations.OldOperation" />
+    public class OpWait : OldOperation
     {
         public int Milliseconds { get; }
 
