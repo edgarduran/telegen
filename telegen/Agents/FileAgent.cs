@@ -67,7 +67,7 @@ namespace telegen.Agents
             dynamic r = new Result(msg);
             (r as Result).Clear("timeStampUtc"); // We're gonna read this from the file.
             r.timeStampUtc = fi.CreationTimeUtc;
-            r.fileEventType = FileEventType.Create;
+            r.fileEventType = "Create";
             r.fileName = fn;
 
             return r;
@@ -86,7 +86,7 @@ namespace telegen.Agents
                 dynamic r = new Result(msg);
                 (r as Result).Clear("timeStampUtc"); // We're gonna read this from the file.
                 r.timeStampUtc = fi.LastWriteTimeUtc;
-                r.fileEventType = FileEventType.Update;
+                r.fileEventType = "Update";
                 r.fileName = fn;
 
                 return r;
@@ -102,7 +102,7 @@ namespace telegen.Agents
                 File.Delete(fn);
 
                 dynamic r = new Result(msg);
-                r.fileEventType = FileEventType.Delete;
+                r.fileEventType = "Delete";
                 r.fileName = fn;
 
                 return r;
@@ -115,7 +115,7 @@ namespace telegen.Agents
         {
             var results = filename
                 .Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-            results = Path.GetFullPath(results); // Document requests the full path to the file. Try to get it here.
+            results = Path.GetFullPath(results); // Assignment requests the full path to the file. Try to get it here.
             return results;
         }
 

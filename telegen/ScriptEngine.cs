@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using telegen.Agents;
 using telegen.Agents.Interfaces;
+using telegen.Interfaces;
 using telegen.Messages;
 using telegen.Results;
 
@@ -11,11 +12,11 @@ namespace telegen
 {
     public class ScriptEngine : IScriptEngine
     {
-        protected IDictionary<string, Func<IAgent>> Agents;
+        protected IDictionary<string, Func<IAgent>> AgentFactories;
 
         public ScriptEngine()
         {
-            Agents = new Dictionary<string, Func<IAgent>>
+            AgentFactories = new Dictionary<string, Func<IAgent>>
             {
                 ["File"] = () => new FileAgent(),
                 ["Process"] = () => new ProcessAgent(),
@@ -33,9 +34,8 @@ namespace telegen
             var opCount = 0;
             foreach (var op in script) {
                 opCount++;
-                //Console.WriteLine($"{op.Domain}.{op.Action}");
-                if (Agents.ContainsKey(op.Domain)) {
-                    var agentFactory = Agents[op.Domain];
+                if (AgentFactories.ContainsKey(op.Domain)) {
+                    var agentFactory = AgentFactories[op.Domain];
                     var agent = agentFactory();
                     var result = agent.Execute(op);
                     if (result != null) 

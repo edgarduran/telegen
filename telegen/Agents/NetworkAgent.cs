@@ -84,7 +84,9 @@ namespace telegen.Agents
 
             dynamic r = new Result(oper);
             r.sourceAddress = Dns.GetHostName();
+            r.sourcePort = clientPort;
             r.destinationAddress = req.Uri.AbsoluteUri;
+            r.destinationPort = req.Port;
             r.bytesSent = req.ToString().Length;
             r.protocol = req.Uri.Scheme;
 
