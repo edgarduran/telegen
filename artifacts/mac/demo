@@ -1,27 +1,13 @@
 echo TELEGEN 1.0 DEMO
 
 echo "Demo # 1:" 
-echo "    Run script 'demo.tg'."
-echo "    Write the output to 'demo.output.csv'." 
-echo "    Delete any existing records before the run."
-dotnet ./telegen.dll ./demo.tg ./demo.output.csv --format=../Layouts/CSV.layout --clear
+echo "    Run script 'demo.json'."
+echo "    Write the output to screen." 
+dotnet ./telegen.dll <./demo.json
 
 echo "Demo # 2:"  
-echo  "   Run script 'demo.tg'."
-echo "    Write the output to 'demo.output.tsv' (tab-separated value)" 
-echo "    Delete any existing records before the run."
-dotnet ./telegen.dll ./demo.tg ./demo.output.tsv --format=../Layouts/TSV.layout --clear
-
-echo "Demo # 3:" 
-echo  "   Run script 'demo.tg'." 
-echo "    Write the output to 'demo.output.bsv' (vertical bar-separated value)." 
-echo "    Delete any existing records before the run."
-dotnet ./telegen.dll ./demo.tg ./demo.output.bsv --format=../Layouts/BSV.layout
-
-echo "Demo # 4:" 
-echo  "   Run script 'demo.tg'."
-echo "    Write the output to 'demo.output.json'." 
-echo "    Delete any existing records before the run."
-dotnet ./telegen.dll ./demo.tg ./demo.output.json  --clear
+echo "   Run script 'demo.tg'."
+echo "    Write the output to 'demo.output.json'" 
+dotnet ./telegen.dll <./demo.json >./demo.output.json
 
 echo Demos complete!

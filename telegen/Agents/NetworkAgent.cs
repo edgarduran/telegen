@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,11 +9,21 @@ using telegen.Results;
 
 namespace telegen.Agents
 {
-    public class NetworkAgent : INetworkAgent, IAgent
+    public class NetworkAgent : Agent
     {
-
-        public NetResult Execute(WebReq req)
+        public override Result Execute(Operation oper)
         {
+            Guard(oper, "Get");
+            return Get(oper);
+        }
+
+        protected Result Get(Operation oper )
+        {
+            var url = oper.Require<string>("url");
+            var port = (int) oper.Optional<long>("port", 80);
+
+            var req = new WebReq(url, port);
+
             // Data buffer for incoming data.  
             byte[] bytes = new byte[1024];
             string response = null;
@@ -20,74 +31,43 @@ namespace telegen.Agents
             int clientPort = 0;
 
             // Connect to a remote device.  
-            try
-            {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                //IPHostEntry ipClientInfo = Dns.GetHostEntry(Dns.GetHostName());
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(req.Uri.Host);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, req.Port);
 
-                // Create a TCP/IP  socket.  
-                Socket sender = new Socket(AddressFamily.InterNetwork,
-                    SocketType.Stream, ProtocolType.Tcp);
+            // Establish the remote endpoint for the socket.  
+            // This example uses port 11000 on the local computer.  
+            //IPHostEntry ipClientInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(req.Uri.Host);
+            IPAddress ipAddress = ipHostInfo.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, req.Port);
 
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try
-                {
-                    sender.Connect(remoteEP);
-                    clientPort = ((IPEndPoint)sender.LocalEndPoint).Port;
+            // Create a TCP/IP  socket.  
+            Socket sender = new Socket(AddressFamily.InterNetwork,
+                SocketType.Stream, ProtocolType.Tcp);
 
-                    //Console.WriteLine("Socket connected to {0}",
-                    //    sender.RemoteEndPoint.ToString());
+            // Connect the socket to the remote endpoint. Catch any errors.  
 
-                    // Encode the data string into a byte array.  
-                    byte[] msg = Encoding.ASCII.GetBytes(req.ToString());
+            sender.Connect(remoteEP);
+            clientPort = ((IPEndPoint)sender.LocalEndPoint).Port;
 
-                    // Send the data through the socket.  
-                    utcTimeStamp = DateTime.UtcNow;
-                    int bytesSent = sender.Send(msg);
+            //Console.WriteLine("Socket connected to {0}",
+            //    sender.RemoteEndPoint.ToString());
 
-                    // Receive the response from the remote device.  
-                    int bytesRec = sender.Receive(bytes);
-                    response = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            // Encode the data string into a byte array.  
+            byte[] msg = Encoding.ASCII.GetBytes(req.ToString());
 
-                    // Release the socket.  
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
+            // Send the data through the socket.  
+            utcTimeStamp = DateTime.UtcNow;
+            int bytesSent = sender.Send(msg);
 
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
+            // Receive the response from the remote device.  
+            int bytesRec = sender.Receive(bytes);
+            response = Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
+            // Release the socket.  
+            sender.Shutdown(SocketShutdown.Both);
+            sender.Close();
+            throw new System.Exception("Fix this.");
+            //return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
         }
 
-        public Result Execute(Operation oper)
-        {
-            if (oper is OpNetGet op)
-            {
-                //var op = oper as OpNetGet;
-                var req = new WebReq(op.Address);
-                return Execute(req);
-            }
-            return new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
-        }
     }
 }

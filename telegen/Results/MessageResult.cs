@@ -21,9 +21,5 @@ namespace telegen.Results {
             Message = message;
         }
 
-        public override void CopyToDictionary(IDictionary<object, object> d) {
-            base.CopyToDictionary(d);
-            d[nameof(Message)] = Message;
-        }
     }
 }
