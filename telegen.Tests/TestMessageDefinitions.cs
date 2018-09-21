@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 using Xunit;
 using Xunit.Abstractions;
@@ -34,21 +34,23 @@ namespace telegen.Tests
         [Fact]
         public void TestOperation()
         {
-            Assert.True(false);
-            var x = new Operation
+            dynamic x = new Operation
             {
                 Domain = "http",
                 Action = "get"
             };
-            //x.Params.url = "http://www.google.com";
-            //output.WriteLine(x.ToString());
 
-            //Assert.Equal("{\"domain\":\"http\",\"action\":\"get\",\"params\":{\"url\":\"http://www.google.com\"}}", x.ToString());
+            var targetUrl = "http://www.google.com";
 
-            //var values = x.Require(p => p.url);
-            //Assert.Equal(values.First().ToString(), x.Params.url);
+            x.url = targetUrl;
+            output.WriteLine(x.ToString());
 
-            //Assert.Null(x.Params.thisPropertyDoesNotExist);
+            Assert.Equal("{\"domain\":\"http\",\"action\":\"get\",\"domain\":\"http\",\"action\":\"get\",\"url\":\"http://www.google.com\"}", x.ToString());
+
+            var value = (x as Operation).Require<string>("url");
+            Assert.Equal(value, targetUrl);
+
+            Assert.Null(x.thisPropertyDoesNotExist);
 
         }
 
@@ -81,6 +83,8 @@ namespace telegen.Tests
                 Domain = "http",
                 Action = "get"
             };
+            var targetUrl = "http://www.google.com";
+            op.AsDynamic.url = targetUrl;
 
             var x = new Result(op);
             x.AsDynamic.filename = "test.txt";

@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Newtonsoft.Json;
 
-namespace telegen
+namespace telegen.Messages
 {
-    public abstract class DynamicBase : DynamicObject
+    public abstract class MessageBase : DynamicObject
     {
-        public DynamicBase()
+        public MessageBase(bool caseSensitive = false, bool readOnly = true)
         {
+            CaseSensitive = caseSensitive;
+            ReadOnly = readOnly;
         }
+
         #region Other Properties
 
         [JsonIgnore]
         public dynamic AsDynamic => this as dynamic;
+
+        [JsonIgnore]
+        public bool CaseSensitive { get; }
+
+        [JsonIgnore]
+        public bool ReadOnly { get; }
 
         private readonly IDictionary<string, object> _props = new Dictionary<string, object>();
 
@@ -26,12 +35,26 @@ namespace telegen
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            return GetPropertyByName(binder.Name.ToLowerInvariant(), out result);
+            return GetPropertyByName(binder.Name.ToLowerInvariant(), out result) || true; // Just return null, if property doesn't exist.
+        }
+
+        public virtual bool SetPropertyByName(string name, object value)
+        {
+            name = CaseSensitive ? name : name.ToLowerInvariant();
+            if (_props.ContainsKey(name) && ReadOnly)
+            {
+                throw new Exception("Attempt to update an existing property of a read-only message.");
+            }
+            else
+            {
+                _props[name] = value;
+                return true;
+            }
         }
 
         public virtual bool GetPropertyByName(string name, out object result)
         {
-            name = name.ToLowerInvariant();
+            name = CaseSensitive ? name : name.ToLowerInvariant();
             if (_props.ContainsKey(name))
             {
                 result = _props[name];
@@ -41,6 +64,20 @@ namespace telegen
             {
                 result = null;
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Removes the properties specified so that they may be reassigned in a
+        /// "readonly" message. This should be used with care, and only by the
+        /// method creating the message.
+        /// </summary>
+        /// <param name="propertyNames">Property names.</param>
+        public void Clear(params string[] propertyNames)
+        {
+            foreach (var n in propertyNames) {
+                var name = CaseSensitive ? n : n.ToLowerInvariant();
+                if (_props.ContainsKey(name)) _props.Remove(name);
             }
         }
 

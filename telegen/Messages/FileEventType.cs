@@ -1,4 +1,4 @@
-﻿namespace telegen.Results
+﻿namespace telegen.Messages
 {
     public static class FileEventType
     {

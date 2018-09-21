@@ -1,4 +1,4 @@
-﻿using telegen.Operations;
+﻿using telegen.Messages;
 using telegen.Results;
 
 namespace telegen.Agents.Interfaces {

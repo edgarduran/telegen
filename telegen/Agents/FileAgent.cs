@@ -2,11 +2,25 @@
 using System.IO;
 using System.Linq;
 using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 namespace telegen.Agents
 {
+
+    /// <summary>
+    /// Exercises the File domain.
+    /// <para>
+    /// Domain-specific fields:
+    /// </para>
+    /// <para>
+    /// <list type="bullet">
+    ///     <item>Event timestamp (when it can be pulled from the file)</item>
+    ///     <item>Full name of file</item>
+    ///     <item>Activity descriptor (Create, Update, Delete)</item>
+    /// </list>
+    /// </para>
+    /// </summary>
     public class FileAgent : Agent //, IFileAgent
     {
         public override Result Execute(Operation oper)
@@ -49,8 +63,14 @@ namespace telegen.Agents
             var fn = NormalizeFileName(msg.Require<string>("filename")); 
             File.WriteAllText(fn, string.Empty);
             var fi = new FileInfo(fn);
-            throw new System.Exception("Fix this.");
-            //return new FileActivityResult(fi.CreationTimeUtc, fn, FileEventType.Create, Environment.UserName);
+
+            dynamic r = new Result(msg);
+            (r as Result).Clear("timeStampUtc"); // We're gonna read this from the file.
+            r.timeStampUtc = fi.CreationTimeUtc;
+            r.fileEventType = FileEventType.Create;
+            r.fileName = fn;
+
+            return r;
         }
 
         protected Result AppendToFile(Operation msg, bool postAppendNewLine)
@@ -62,8 +82,14 @@ namespace telegen.Agents
             {
                 File.AppendAllText(fn, contents);
                 var fi = new FileInfo(fn);
-                throw new System.Exception("Fix this.");
-                //            return new FileActivityResult(fi.LastWriteTimeUtc, fn, FileEventType.Update, Environment.UserName);
+
+                dynamic r = new Result(msg);
+                (r as Result).Clear("timeStampUtc"); // We're gonna read this from the file.
+                r.timeStampUtc = fi.LastWriteTimeUtc;
+                r.fileEventType = FileEventType.Update;
+                r.fileName = fn;
+
+                return r;
             }
             return null;
         }
@@ -74,8 +100,12 @@ namespace telegen.Agents
             if (File.Exists(fn))
             {
                 File.Delete(fn);
-                throw new System.Exception("Fix this.");
-                //return new FileActivityResult(DateTime.UtcNow, fn, FileEventType.Delete, Environment.UserName);
+
+                dynamic r = new Result(msg);
+                r.fileEventType = FileEventType.Delete;
+                r.fileName = fn;
+
+                return r;
 
             }
             return null;
@@ -85,6 +115,7 @@ namespace telegen.Agents
         {
             var results = filename
                 .Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+            results = Path.GetFullPath(results); // Document requests the full path to the file. Try to get it here.
             return results;
         }
 

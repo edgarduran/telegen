@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <Version>1.1.0</Version>
-    <ReleaseVersion>1.1.0</ReleaseVersion>
+    <ReleaseVersion>0.1.1</ReleaseVersion>
     <SynchReleaseVersion>true</SynchReleaseVersion>
   </PropertyGroup>
 
@@ -21,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Results\FileActivityResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
-    <None Include="Results\FileEventType.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <None Include="Results\MessageResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <None Include="Results\NetResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
     <None Include="Results\SpawnResult.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
@@ -47,7 +46,6 @@
     <Compile Remove="Util\CommandParser.cs" />
     <Compile Remove="Results\NullResult.cs" />
     <Compile Remove="Results\FileActivityResult.cs" />
-    <Compile Remove="Results\FileEventType.cs" />
     <Compile Remove="Results\MessageResult.cs" />
     <Compile Remove="Results\NetResult.cs" />
     <Compile Remove="Results\SpawnResult.cs" />

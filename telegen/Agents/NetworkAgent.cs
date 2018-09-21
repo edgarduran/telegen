@@ -4,11 +4,25 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 namespace telegen.Agents
 {
+    /// <summary>
+    /// Exercises the Network domain.
+    /// <para>
+    /// Domain-specific fields:
+    /// </para>
+    /// <para>
+    /// <list type="bullet">
+    ///     <item>Source address and port</item>
+    ///     <item>Destination address and port</item>
+    ///     <item>Amount of data sent</item>
+    ///     <item>Protocol of data sent</item>
+    /// </list>
+    /// </para>
+    /// </summary>
     public class NetworkAgent : Agent
     {
         public override Result Execute(Operation oper)
@@ -65,8 +79,16 @@ namespace telegen.Agents
             // Release the socket.  
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
-            throw new System.Exception("Fix this.");
+
             //return new NetResult(new WebResp(req, response, utcTimeStamp, Dns.GetHostName(), clientPort));
+
+            dynamic r = new Result(oper);
+            r.sourceAddress = Dns.GetHostName();
+            r.destinationAddress = req.Uri.AbsoluteUri;
+            r.bytesSent = req.ToString().Length;
+            r.protocol = req.Uri.Scheme;
+
+            return r;
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿using System;
-using telegen.Operations;
+using telegen.Messages;
 
-namespace telegen.Operations
+namespace telegen.Messages
 {
     public class WebResp : Operation
     {

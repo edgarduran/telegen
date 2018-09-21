@@ -1,5 +1,5 @@
 ﻿using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 namespace telegen.Agents {
@@ -14,8 +14,7 @@ namespace telegen.Agents {
         protected Result Wait(Operation msg) {
             var ms =(int) msg.Require<long>("ms");
             System.Threading.Thread.Sleep(ms);
-            throw new System.Exception("Fix this.");
-//            return new MessageResult($"Script was paused for {ms} milliseconds...");
+            return null; // output not requested for this task. Don't confuse the output.
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 /// <summary>

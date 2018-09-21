@@ -4,7 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using telegen.Agents;
 using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 namespace telegen
