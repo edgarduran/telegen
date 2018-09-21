@@ -1,30 +1,23 @@
 @ECHO OFF
 
-ECHO TELEGEN 1.0 DEMO
+ECHO TELEGEN 1.0 DEMO for WINDOWS
 ECHO.
 
+dotnet telegen.dll /help | more
+
 ECHO Demo # 1: 
-ECHO     Run script "demo.tg". 
-ECHO     Write the output to "demo.output.csv". 
-ECHO     Delete any existing records before the run.
-dotnet telegen.dll demo.tg demo.output.csv --format=..\\Layouts\\CSV.layout --clear
+ECHO     Run script "demo.json". 
+ECHO     Pipe the output to more. 
+dotnet telegen.dll <./demo.json | more
 
 ECHO Demo # 2: 
-ECHO     Run script "demo.tg". 
-ECHO     Write the output to "demo.output.tsv". (Tab-separated value) 
-ECHO     Delete any existing records before the run.
-dotnet telegen.dll demo.tg demo.output.tsv --format=..\\Layouts\\TSV.layout --clear
+ECHO     Run script "demo.json". 
+ECHO     Write the output to "demo.output.json".
+dotnet telegen.dll <./demo.json >./demo.output.json
 
 ECHO Demo # 3: 
-ECHO     Run script "demo.tg". 
-ECHO     Write the output to "demo.output.bsv". (Vertical bar-separated value) 
-ECHO     Retains existing records; New headers are added with each run.
-dotnet telegen.dll demo.tg demo.output.bsv --format=..\\Layouts\\BSV.layout
-
-ECHO Demo # 4: 
-ECHO     Run script "demo.tg". 
-ECHO     Write the output to "demo.output.json". (No format file specified.)
-ECHO     Delete any existing records before the run.
-dotnet telegen.dll demo.tg demo.output.json --clear
+ECHO     Run script "demo.json".
+ECHO     Write the unformatted output to the screen.
+dotnet telegen.dll /raw <./demo.json
 
 ECHO Demos complete!

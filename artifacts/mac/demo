@@ -1,4 +1,6 @@
-echo TELEGEN 1.0 DEMO
+echo TELEGEN 1.0 DEMO for macOS
+
+dotnet ./telegen.dll /help | less
 
 echo "Demo # 1:" 
 echo "    Run script 'demo.json'."
