@@ -1,1 +1,1 @@
-rm demo.output.* 
+rm demo.output.json

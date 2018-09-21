@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
-using NLog;
-using NLog.Config;
-using NLog.Layouts;
-using NLog.Targets;
-using telegen.Agents;
-using telegen.Agents.Interfaces;
-using telegen.Util;
+using telegen.Interfaces;
 
 namespace telegen
 {
@@ -17,76 +11,11 @@ namespace telegen
     {
         static void Main(string[] args)
         {
-            #region Header
-            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            Console.WriteLine($"telegen v{version}\n");
-            #endregion
 
-            #region Initialization
-            var cmd = CommandParser.GetParsedCommand(); // Reads the command string
-            if (HelpRequested(cmd)) return;
-
-            SetDefaults();
-
-            string scriptFile = null;
-            string outFile = null;
-
-            switch (cmd.Parms.Count) {
-                case 1:
-                    scriptFile = cmd.Parms[0];
-                    outFile = scriptFile + ".txt";
-                    break;
-                case 2:
-                    scriptFile = cmd.Parms[0];
-                    outFile = cmd.Parms[1];
-                    break;
-                default:
-                    Console.WriteLine("\t\tERR: Invalid command line syntax.");
-                    ShowHelp();
-                    break;
-            }
-
-            if (scriptFile == null) return;
-
-            var echoOn = cmd.ContainsSwitch("echo");
-
-            var useCustomLayout = cmd.ContainsSwitch("format");
-            ReportLayout customLayout = null;
-            IReportAgent rpt;
-            dynamic header = null;
-            if (useCustomLayout) {
-                var customLayoutFile = cmd.Switches.format;
-                if (File.Exists(customLayoutFile)) {
-                    //customLayout = File.ReadAllText(customLayoutFile);
-                    customLayout = ReportLayout.Open(customLayoutFile);
-                } else {
-                    throw new Exception($"ERR: Could not find requested layout file ({customLayoutFile})");
-                }
-                rpt = new CustomReportAgent(outFile, customLayout);
-            } else {
-                rpt = new JSONReportAgent(outFile);
-                header = new ExpandoObject();
-                header.rundate = DateTime.UtcNow;
-                header.version = version;
-            }
-            #endregion
-
-            #region Execute Report
-
-            if (cmd.ContainsSwitch("clear") && File.Exists(outFile)) File.Delete(outFile);
-            
-            rpt.EmitHeader(header);
-
-            var engine = new ScriptEngine();
-            foreach (var logEntry in engine.Execute(scriptFile)) {
-                if (logEntry == null) continue;
-                rpt.EmitDetailLine(logEntry);
-                if (echoOn) Console.WriteLine(logEntry.ToString());
-            }
-
-            rpt.EmitFooter();
-
-            #endregion
+            var (script, engine) = Initialize();
+            if (script == null || engine == null) return;
+            var rpt = engine.ParseAndExecute(script);
+            Console.WriteLine(JsonConvert.SerializeObject(rpt));
             
             #region Make VS-Windows behave like VS-Mac.
 #if DEBUG
@@ -99,53 +28,78 @@ namespace telegen
             #endregion
         }
 
+        private static (string, IScriptEngine) Initialize()
+        {
+            if (HelpRequested()) return (null, null) ;
+
+            SetDefaults();
+
+            string script = ReadScriptFromStdIn();
+
+            if (string.IsNullOrWhiteSpace(script)) throw new Exception("No script found in stdin.");
+
+            IScriptEngine engine = new ScriptEngine();
+
+            return (script, engine);
+        }
+
+        private static string ReadScriptFromStdIn()
+        {
+            StringBuilder script = new StringBuilder();
+            var line = string.Empty;
+            while ((line = Console.ReadLine()) != null)
+            {
+                script.AppendLine(line);
+            }
+            return script.ToString(); 
+        }
 
         private static void SetDefaults() {
+            Formatting fmt = Environment.CommandLine.Contains("/raw") ? 
+                Formatting.None : 
+                Formatting.Indented;
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
-                //TypeNameHandling = TypeNameHandling.All,
-                Formatting = Formatting.Indented
+                Formatting = fmt
             };
         }
 
-        private static bool HelpRequested(IParsedCommand cmd) {
-            if (!cmd.ContainsSwitch("help")) return false;
+        private static bool HelpRequested() {
+            if (!Environment.CommandLine.Contains("/help")) return false;
             ShowHelp();
             return true;
-
         }
 
-
-        public static void ShowHelp()
+        private static void ShowHelp()
         {
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+            Console.WriteLine($"telegen v{version}\n");
             Console.WriteLine();
             Console.WriteLine("   Usage:\n");
-            Console.WriteLine("      telegen <scriptfile> [outputfile]  [switches]\n");
-            Console.WriteLine("         <scriptfile> -- The name of a text file containing the script to execute. Suggested extension is '.tg'.");
-            Console.WriteLine("         [outputfile] -- Optional. Specifies the file name where the results are written. Default is <scriptfile>.txt\n\n");
+            Console.WriteLine("      telegen reads from stdin, and writes to stdout. Standard redirection and piping is supported.\n\n");
+
 
             Console.WriteLine("   Switches:\n");
-            Console.WriteLine("      --help              : Show this help information.");
-            Console.WriteLine("      --echo              : Display log output to the screen.\n\n");
-            Console.WriteLine("      --clear             : Clear the log before running.\n\n");
-            Console.WriteLine("      --format=<filename> : Use a custom format for the output.\n\n");
+            Console.WriteLine("      /help              : Show this help information.");
+            Console.WriteLine("      /raw               : Don't format json output.\n\n");
 
-            Console.WriteLine("   Script Command Examples:\n");
-            Console.WriteLine("      # This is a comment");
-            Console.WriteLine("      FILE CREATE <filename>");
-            Console.WriteLine("      FILE APPEND <filename>  \"<string to append>\"");
-            Console.WriteLine("      FILE APPENDLINE <filename>  '<string to append>'");
-            Console.WriteLine("      FILE DELETE <filename>");
-            Console.WriteLine("      EXEC <application> <application parameters>");
-            Console.WriteLine("      NET GET <url>\n\n");
-            Console.WriteLine("      WAIT <milliseconds>\n\n");
+            Console.WriteLine("   Script Example:\n");
+            Console.WriteLine(@"
+        [
+            { ""domain"": ""System"", ""action"": ""Comment"", ""text"": ""[domain] and [action] properties are required on all operations.""},
+            { ""domain"": ""System"", ""action"": ""Comment"", ""text"": ""Add any properties you want to comment actions!""},
+            { ""domain"": ""File"", ""action"": ""Create"", ""filename"": ""~/Tempfile.txt""},
+            { ""domain"": ""File"", ""action"": ""AppendLine"", ""filename"": ""~/Tempfile.txt"", ""contents"": ""Today is the first day of the rest of your life.""},
+            { ""domain"": ""File"", ""action"": ""Append"", ""filename"": ""~/Tempfile.txt"", ""contents"": ""Today is the first day of the rest of your life.""},
+            { ""domain"": ""File"", ""action"": ""AppendLine"", ""filename"": ""~/Tempfile.txt"", ""contents"": ""Today is the first day of the rest of your life.""},
+            { ""domain"": ""Process"", ""action"": ""Spawn"", ""executable"": ""atom"", ""arguments"": ""~/Tempfile.txt""},
+            { ""domain"": ""Network"", ""action"": ""Get"", ""url"": ""http://www.google.com""},
+            { ""domain"": ""System"", ""action"": ""Wait"", ""ms"": 4000},
+            { ""domain"": ""File"", ""action"": ""Delete"", ""filename"": ""~/Tempfile.txt""}
+        ]");
 
-            Console.WriteLine("   Filenames and string data may be enclosed in single or double-quotes. If single-quotes");
-            Console.WriteLine("   are used, then they can include double-quotes, and vise-versa. To comment a line, add");
-            Console.WriteLine("   a hashtag (#) to the front of the line.");
             Console.WriteLine();
         }
     }
-
 
 }

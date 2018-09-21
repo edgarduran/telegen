@@ -1,0 +1,13 @@
+[
+    { "domain": "System", "action": "Comment", "text": "Add any properties you want!"},
+    { "domain": "File", "action": "Create", "filename": "~/Tempfile.txt"},
+    { "domain": "File", "action": "AppendLine", "filename": "~/Tempfile.txt", "contents": "Today is the first day of the rest of your life."},
+    { "domain": "File", "action": "Append", "filename": "~/Tempfile.txt", "contents": "     -- "},
+    { "domain": "File", "action": "AppendLine", "filename": "~/Tempfile.txt", "contents": "Author Unknown"},
+    { "domain": "Process", "action": "Spawn", "executable": "atom", "arguments": "~/Tempfile.txt"},
+    { "domain": "Network", "action": "Get", "url": "http://www.google.com"},
+    { "domain": "Network", "action": "Get", "url": "http://images.perseusbooks.com/quickref.html"},
+    { "domain": "System", "action": "Wait", "ms": 4000},
+    { "domain": "File", "action": "Delete", "filename": "~/Tempfile.txt"}
+]
+

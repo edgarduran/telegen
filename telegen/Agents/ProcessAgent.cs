@@ -1,23 +1,44 @@
 ﻿using System;
 using telegen.Agents.Interfaces;
-using telegen.Operations;
+using telegen.Messages;
 using telegen.Results;
 
 namespace telegen.Agents
 {
-    public class ProcessAgent : IProcessAgent, IAgent
+    /// <summary>
+    /// Exercises the Process domain.
+    /// <para>
+    /// Domain-specific fields:
+    /// </para>
+    /// <para>
+    /// <list type="bullet">
+    ///     <item>Process name</item>
+    ///     <item>Process command line</item>
+    ///     <item>Process id</item>
+    /// </list>
+    /// </para>
+    /// </summary>
+    public class ProcessAgent : Agent
     {
-        public SpawnResult Spawn(OpSpawn msg)
+        public override Result Execute(Operation oper)
         {
-            var p = System.Diagnostics.Process.Start(msg.Executable, msg.Arguments);
-            return new SpawnResult(p, Environment.UserName, msg.Arguments);
+            Guard(oper, "Spawn");
+            return Spawn(oper);
         }
 
-        public Result Execute(Operation oper)
+        protected Result Spawn(Operation msg)
         {
-            return oper is OpSpawn ?
-                Spawn(oper as OpSpawn) as Result :
-                new NullResult($"{GetType().Name} was invoked with an unsupported operation type ({oper.GetType().Name}).");
+            Guard(msg, "Spawn");
+            var (executable, arguments) = msg.Require<string, string>("executable", "arguments");
+            var p = System.Diagnostics.Process.Start(executable, arguments);
+
+            dynamic r = new Result(msg);
+            r.appName = p.ProcessName;
+            r.appCommandLine = p.StartInfo.Arguments;
+            r.appProcessId = p.Id;
+
+            return r;
         }
+
     }
 }
